@@ -69,3 +69,32 @@ def preprocess(text):
     trimmed_words = [word for word in words if word_counts[word] > 5]
     print(trimmed_words[:30])
     return trimmed_words
+
+
+
+def create_lookup_tables(words):
+    '''
+    Creates two dictionaries to convert words to integers and back again (integers to words).
+
+    Parameters
+    ----------
+    words : list
+        List containing words in the document as elements.
+
+
+    Returns
+    -------
+    vocab_to_int : dict
+        words as keys and int id as valie.
+    int_to_vocab : dict
+        int id as keys and words as valie.
+
+    '''
+    
+    word_counts = Counter(words)
+    
+    sorted_vocab = sorted(word_counts, key=word_counts.get, reverse=True)
+    int_to_vocab = {ii: word for ii, word in enumerate(sorted_vocab)}
+    vocab_to_int ={word: ii for ii, word in int_to_vocab.items()}
+    
+    return vocab_to_int, int_to_vocab
