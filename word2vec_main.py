@@ -22,3 +22,8 @@ vocab_to_int, int_to_vocab = create_lookup_tables(words)
 int_words = [vocab_to_int[word] for word in words]
 
 print(int_words[:30])
+
+train_words = subsampling(int_words, threshold = 1e-5)
+
+
+print(train_words[:30])

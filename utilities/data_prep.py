@@ -6,6 +6,9 @@ Created on Fri Aug  7 16:13:10 2020
 """
 import re
 from collections import Counter
+import random
+import numpy as np
+
 
 def load_data(file):
     '''
@@ -98,3 +101,37 @@ def create_lookup_tables(words):
     vocab_to_int ={word: ii for ii, word in int_to_vocab.items()}
     
     return vocab_to_int, int_to_vocab
+
+
+
+
+def subsampling(int_words, threshold = 1e-5):
+    '''
+    Implements the subsampling process to remove some of the noise coming from very frequent words,
+    proposed by Mikolov. For each word  𝑤𝑖  in the training set, we'll discard it with some probability.
+
+    Parameters
+    ----------
+    int_words : list
+        A list of words containing as each element the tokens from a corpus
+    threshold : np.float, optional
+        Hyperparameter to calculate the probability. The default is 1e-5.
+
+    Returns
+    -------
+    train_words : list
+        Sampled list of words to use in the training process.
+
+    '''
+    
+    total_count = len(int_words)
+    word_counts = Counter(int_words)
+
+
+    freqs = {word: count/total_count for word, count in word_counts.items()}
+    p_drop = {word: 1 - np.sqrt(threshold/freqs[word]) for word in word_counts} 
+    train_words = [word for word in int_words if random.random() < (1 - p_drop[word])]
+
+    return train_words
+
+
