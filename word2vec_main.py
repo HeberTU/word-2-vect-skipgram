@@ -8,7 +8,8 @@ import os
 os.chdir("C:/Users/htrujillo/projects/Implementing_Word2Vec_SkipGram")
 
 from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
-
+from net.architecture import SkipGram
+from net.train import train
 
 text = load_data("data/text8")
 
@@ -26,3 +27,11 @@ print(int_words[:30])
 train_words = subsampling(int_words, threshold = 1e-5)
 
 print(train_words[:30])
+
+embedding_dim = 300
+
+
+model = SkipGram(len(vocab_to_int), embedding_dim)
+
+
+train(model, train_words, int_to_vocab, embedding_dim = 300, print_every = 100, epochs = 5)
