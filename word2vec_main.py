@@ -7,7 +7,7 @@ Created on Fri Aug  7 16:08:50 2020
 import os 
 os.chdir("C:/Users/htrujillo/projects/Implementing_Word2Vec_SkipGram")
 
-from utilities.data_prep import load_data, preprocess,  create_lookup_tables
+from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
 
 
 text = load_data("data/text8")
@@ -24,6 +24,5 @@ int_words = [vocab_to_int[word] for word in words]
 print(int_words[:30])
 
 train_words = subsampling(int_words, threshold = 1e-5)
-
 
 print(train_words[:30])

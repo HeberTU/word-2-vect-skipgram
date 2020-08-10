@@ -135,3 +135,34 @@ def subsampling(int_words, threshold = 1e-5):
     return train_words
 
 
+def get_target(words, idx, window_size = 5):
+    '''
+    With the skip-gram architecture, for each word in the text, we want to define a surrounding context and grab all the words in a window around that word.
+    
+
+    Parameters
+    ----------
+    words : list
+        list of words.
+    idx : int
+        input value.
+    window_size : int, optional
+        max size of the window. The default is 5.
+
+    Returns
+    -------
+    window : list
+        target variable to the skip-gram architecture.
+
+    '''
+    window = []
+    r = np.random.randint(1,window_size +1 )
+    
+    if idx-r<0:
+        window = window + words[0:idx]
+    else:
+        window = window + words[idx-r:idx]
+    
+    window = window + words[idx+1:idx+r+1]
+    
+    return window 
