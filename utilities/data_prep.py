@@ -166,3 +166,23 @@ def get_target(words, idx, window_size = 5):
     window = window + words[idx+1:idx+r+1]
     
     return window 
+
+def get_batches(words, batch_size, window_size=5):
+    ''' Create a generator of word batches as a tuple (inputs, targets) '''
+    
+    n_batches = len(words)//batch_size
+    
+    # only full batches
+    words = words[:n_batches*batch_size]
+    
+    for idx in range(0, len(words), batch_size):
+        x, y = [], []
+        batch = words[idx:idx+batch_size]
+        for ii in range(len(batch)):
+            batch_x = batch[ii]
+            batch_y = get_target(batch, ii, window_size)
+            y.extend(batch_y)
+            x.extend([batch_x]*len(batch_y))
+        
+        yield x, y
+           
