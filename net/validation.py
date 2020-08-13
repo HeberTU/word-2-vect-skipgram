@@ -13,7 +13,7 @@ def cosine_similarity(embedding, valid_size = 16, valid_window = 100, device = '
     
     embed_vectors = embedding.weight
     
-    magnitudes = embed_vectors.pow(2).sum(dim = 1).sqrt().unssqueeze(0)
+    magnitudes = embed_vectors.pow(2).sum(dim = 1).sqrt().unsqueeze(0)
     
     valid_examples = np.array(random.sample(range(valid_window), valid_size//2))
     
