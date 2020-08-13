@@ -30,3 +30,22 @@ Below is an approximate diagram of the general structure of the network:
 
 
 <img width="832" alt="skip_gram_arch" src="https://user-images.githubusercontent.com/28582065/90184551-93fef480-ddb5-11ea-8ab4-1dde6e9285eb.png">
+
+
+## Results
+
+In this section, we will show some preliminary results. But before, lest talk a bit about how can we take advantage of the embeddings.
+
+### Cosine Similarity
+
+We can encode a given word as vectors $\vec{a}$ using the embedding table, then calculate the similarity with each word vector $\vec{b}$ in the embedding table with the following equation:
+
+$$
+\mathrm{similarity} = \cos(\theta) = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}||\vec{b}|}
+$$
+
+### Random Examples
+
+The image below shows some randomly selected words, followed by a set of words with which they share a similar context:
+
+![Random_results](https://user-images.githubusercontent.com/28582065/90186260-2f916480-ddb8-11ea-8243-c2f441665bd4.PNG)
