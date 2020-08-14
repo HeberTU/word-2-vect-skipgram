@@ -10,6 +10,7 @@ os.chdir("C:/Users/heber/Projects/Deep Learning/Implementing_Word2Vec_SkipGram")
 from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
 from net.architecture import SkipGram
 from net.train import train
+import torch
 
 text = load_data("data/text8")
 
@@ -36,4 +37,4 @@ model = SkipGram(len(vocab_to_int), embedding_dim)
 
 train(model, train_words, int_to_vocab, embedding_dim = 300, print_every = 3000, epochs = 5)
 
-
+torch.save(model.state_dict(), "results/SkipGram_model.pth")
