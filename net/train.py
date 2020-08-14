@@ -10,7 +10,7 @@ from torch import nn
 from utilities.data_prep import get_batches
 from net.validation import cosine_similarity
 
-def train(model, train_words, int_to_vocab, embedding_dim = 300, print_every = 500, epochs = 5):
+def train(model, train_words, int_to_vocab,batch_size = 128 , embedding_dim = 300, print_every = 500, epochs = 5, verbose = True):
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print("The model will Train on {}".format(device))
@@ -23,7 +23,8 @@ def train(model, train_words, int_to_vocab, embedding_dim = 300, print_every = 5
     ep = 0
     for e in range(epochs):
         ep = ep + 1
-        for inputs, targets in get_batches(train_words, 128):
+        
+        for inputs, targets in get_batches(train_words, batch_size):
             steps += 1
             inputs, targets = torch.LongTensor(inputs), torch.LongTensor(targets)
             inputs, targets = inputs.to(device), targets.to(device)
@@ -46,5 +47,7 @@ def train(model, train_words, int_to_vocab, embedding_dim = 300, print_every = 5
                     closest_words = [int_to_vocab[idx.item()] for idx in closest_idxs[ii]][1:]
                     print(int_to_vocab[valid_idx.item()] + " | " + ', '.join(closest_words))
                 print("...")
-                print("epoch {} de {}".format(ep,epochs))
+                if verbose:
+                    print("epoch {} de {}".format(ep,epochs))
+                    print("Batches processed {}".format(ep,epochs))
 

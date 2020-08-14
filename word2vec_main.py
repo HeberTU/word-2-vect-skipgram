@@ -5,7 +5,7 @@ Created on Fri Aug  7 16:08:50 2020
 @author: HTRUJILLO
 """
 import os 
-os.chdir("C:/Users/heber/Projects/Deep Learning/Implementing_Word2Vec_SkipGram")
+os.chdir("c:/Users/htrujillo/projects/Implementing_Word2Vec_SkipGram")
 
 from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
 from net.architecture import SkipGram
@@ -35,6 +35,6 @@ embedding_dim = 300
 model = SkipGram(len(vocab_to_int), embedding_dim)
 
 
-train(model, train_words, int_to_vocab, embedding_dim = 300, print_every = 3000, epochs = 5)
+train(model, train_words, int_to_vocab, batch_size = 128, embedding_dim = 300, print_every = 3000, epochs = 5)
 
 torch.save(model.state_dict(), "results/SkipGram_model.pth")
