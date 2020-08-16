@@ -9,6 +9,7 @@ import torch.optim as optim
 from torch import nn
 from utilities.data_prep import get_batches
 from net.validation import cosine_similarity
+from net.architecture import SkipGram
 
 def train(model, train_words, int_to_vocab,batch_size = 128 , embedding_dim = 300, print_every = 500, epochs = 5, verbose = True):
     
@@ -51,3 +52,22 @@ def train(model, train_words, int_to_vocab,batch_size = 128 , embedding_dim = 30
                     print("epoch {} de {}".format(ep,epochs))
                     print("Batches processed {}".format(ep,epochs))
 
+
+def save_embbedings(model , n_vocab, n_embed, path = "skipgram_embed.pth"):
+    
+    check_point = {
+        'state_dict': model.state_dict(),
+        'n_vocab': n_vocab,
+        'n_embed': n_embed}
+    
+    torch.save(check_point, path)
+    print("Model saved as {}".format(path))
+    
+  
+
+
+def load_embbedings(file_path):
+    check_point = torch.load(file_path)    
+    model = SkipGram(n_vocab = check_point['n_vocab'], n_embed = check_point['n_embed'])
+    model.load_state_dict(check_point['state_dict'])
+    return model
