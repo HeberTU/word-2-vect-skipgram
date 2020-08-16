@@ -9,32 +9,39 @@ os.chdir("c:/Users/htrujillo/projects/Implementing_Word2Vec_SkipGram")
 
 from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
 from net.architecture import SkipGram
-from net.train import train
-import torch
+from net.train import train, save_embbedings, load_embbedings
 
-text = load_data("data/text8")
+train_model = False
 
-words = preprocess(text)
+if train_model:
+    
+    print("We will train the model")
+    text = load_data("data/text8")
 
-print("Total words in text: {}".format(len(words)))
-print("Unique words: {}".format(len(set(words))))
+    words = preprocess(text)
 
-vocab_to_int, int_to_vocab = create_lookup_tables(words)
+    print("Total words in text: {}".format(len(words)))
+    print("Unique words: {}".format(len(set(words))))
 
-int_words = [vocab_to_int[word] for word in words]
+    vocab_to_int, int_to_vocab = create_lookup_tables(words)
 
-print(int_words[:30])
+    int_words = [vocab_to_int[word] for word in words]
 
-train_words = subsampling(int_words, threshold = 1e-5)
+    print(int_words[:30])
 
-print(train_words[:30])
+    train_words = subsampling(int_words, threshold = 1e-5)
 
-embedding_dim = 300
+    print(train_words[:30])
+
+    embedding_dim = 300
 
 
-model = SkipGram(len(vocab_to_int), embedding_dim)
+    model = SkipGram(len(vocab_to_int), embedding_dim)
 
+    train(model, train_words, int_to_vocab, batch_size = 128, embedding_dim = 300, print_every = 3000, epochs = 5)
 
-train(model, train_words, int_to_vocab, batch_size = 128, embedding_dim = 300, print_every = 3000, epochs = 5)
+    save_embbedings(model, n_vocab = len(vocab_to_int), n_embed = embedding_dim, path = "results/skipgram_embed.pth")
 
-torch.save(model.state_dict(), "results/SkipGram_model.pth")
+else:
+    print("We will load a trained model")
+    model = load_embbedings(file_path = "results/skipgram_embed.pth")
