@@ -10,24 +10,27 @@ os.chdir("c:/Users/htrujillo/projects/Implementing_Word2Vec_SkipGram")
 from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
 from net.architecture import SkipGram
 from net.train import train, save_embbedings, load_embbedings
+from visualization.tsne_vis import tsne_vis
 
 train_model = False
 
-if train_model:
+
     
+text = load_data("data/text8")
+
+words = preprocess(text)
+
+print("Total words in text: {}".format(len(words)))
+print("Unique words: {}".format(len(set(words))))
+
+vocab_to_int, int_to_vocab = create_lookup_tables(words)
+
+int_words = [vocab_to_int[word] for word in words]
+
+print(int_words[:30])
+
+if train_model:
     print("We will train the model")
-    text = load_data("data/text8")
-
-    words = preprocess(text)
-
-    print("Total words in text: {}".format(len(words)))
-    print("Unique words: {}".format(len(set(words))))
-
-    vocab_to_int, int_to_vocab = create_lookup_tables(words)
-
-    int_words = [vocab_to_int[word] for word in words]
-
-    print(int_words[:30])
 
     train_words = subsampling(int_words, threshold = 1e-5)
 
@@ -45,3 +48,6 @@ if train_model:
 else:
     print("We will load a trained model")
     model = load_embbedings(file_path = "results/skipgram_embed.pth")
+
+
+tsne_vis(model, int_to_vocab, vis_words = 600)
