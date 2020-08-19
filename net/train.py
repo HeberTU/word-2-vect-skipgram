@@ -50,7 +50,7 @@ def train(model, train_words, int_to_vocab,batch_size = 128 , embedding_dim = 30
                 print("...")
                 if verbose:
                     print("epoch {} de {}".format(ep,epochs))
-                    print("Batches processed {}".format(ep,epochs))
+                    print("Current Loss {}".format(loss.item()))
 
 
 def save_embbedings(model , n_vocab, n_embed, path = "skipgram_embed.pth"):
