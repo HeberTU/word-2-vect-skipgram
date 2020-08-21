@@ -2,6 +2,8 @@
 
 ## Visual Demo
 
+The below image illustrates how the algorithm has learned to represent semantically similar words into close spatial points.
+
 ![Word_embed_plot](https://user-images.githubusercontent.com/28582065/90884890-e3928100-e3b0-11ea-8cf4-220416dc91c9.gif)
 
 ## Introduction
