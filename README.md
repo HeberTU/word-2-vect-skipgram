@@ -1,5 +1,9 @@
 # Implementing Word2Vec SkipGram
 
+## Visual Demo
+
+![Word_embed_plot](https://user-images.githubusercontent.com/28582065/90884890-e3928100-e3b0-11ea-8cf4-220416dc91c9.gif)
+
 ## Introduction
 
 This Python package uses [PyTorch](https://pytorch.org/) to implement the Word2Vec algorithm using skip-gram architecture.
