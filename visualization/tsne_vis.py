@@ -22,7 +22,7 @@ def tsne_vis(model, int_to_vocab, vis_words = 100):
 
 
 
-def get_tsne_vis_df(model,int_to_vocab, Path = None):
+def get_tsne_vis_df(model,int_to_vocab, path = None):
     from sklearn.manifold import TSNE
     import pandas as pd
     import os
