@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "implementing_word2vec_skipgram"
+version = "0.1.0"
+description = "Efficient implementation of Word Representations in Vector Space, as proposed by Mikolov et al."
+authors = ["Heber Trujillo <heber.trj.urt@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.23.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
