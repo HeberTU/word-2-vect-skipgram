@@ -4,20 +4,17 @@ Created on Fri Aug  7 16:08:50 2020
 
 @author: HTRUJILLO
 """
-import os 
-os.chdir("c:/Users/htrujillo/projects/Implementing_Word2Vec_SkipGram")
 
-from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
-from net.architecture import SkipGram
-from net.train import train, save_embbedings, load_embbedings
-from visualization.tsne_vis import tsne_vis
+# from utilities.data_prep import load_data, preprocess,  create_lookup_tables, subsampling
+# from net.architecture import SkipGram
+# from net.train import train, save_embbedings, load_embbedings
+# from visualization.tsne_vis import tsne_vis
 
 train_model = False
-
+from word2vect.data.data_prep import load_data, preprocess, create_lookup_tables
 
     
 text = load_data("data/text8")
-
 words = preprocess(text)
 
 print("Total words in text: {}".format(len(words)))
