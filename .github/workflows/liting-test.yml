@@ -45,10 +45,10 @@ jobs:
         source .venv/bin/activate
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: pydocstyle
-      run: |
-        source .venv/bin/activate
-        pydocstyle --convention google
+#    - name: pydocstyle
+#      run: |
+#        source .venv/bin/activate
+#        pydocstyle --convention google
 
     - name: Test with pytest
       run: |
