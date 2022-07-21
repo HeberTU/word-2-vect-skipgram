@@ -24,8 +24,8 @@ OutputActivation = nn.LogSoftmax
 class HiddenLayers:
     """Hidden Layer definition."""
 
-    hidden_dim: List[int]
-    activation: Activation
+    hidden_dim: Optional[List[int]] = None
+    activation: Optional[Activation] = None
     dropout: Optional[float] = None
 
 
@@ -65,6 +65,8 @@ def build_sequential_layers(
         [features.embedding_dim]
         + hidden_layers.hidden_dim
         + [features.vocabulary.size]
+        if hidden_layers.hidden_dim is not None
+        else [features.embedding_dim] + [features.vocabulary.size]
     )
 
     for j in range(len(size_list) - 1):
