@@ -9,13 +9,13 @@ from string import ascii_letters
 from typing import Tuple
 
 import pytest
-import torch
 from _pytest.fixtures import FixtureRequest
 from torch.nn import (
     LogSoftmax,
     ReLU,
 )
 
+import tests.fixtures as w2v_fixtures
 import word2vect.ml.loss_functions as loss_functions
 from word2vect.ml.networks.features import (
     Features,
@@ -92,16 +92,40 @@ def skipgram(request: FixtureRequest) -> SkipGram:
 
 
 @pytest.fixture
-def loss_artifacts() -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Create loss function artifacts."""
-    loss = torch.tensor([1])
-    predictions = torch.tensor([4, 5, 6])
-    target = torch.tensor([4, 5, 6])
-
-    return loss, predictions, target
-
-
-@pytest.fixture
 def training_stats() -> loss_functions.TrainingStats:
     """Create a training stats instance."""
     return loss_functions.TrainingStats()
+
+
+@pytest.fixture
+def result(request: FixtureRequest) -> loss_functions.Result:
+    """Create a result set."""
+    loss_artifacts_type = request.param.get("loss_artifacts_type")
+    loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
+    loss_artifacts = {
+        k: v
+        for k, v in loss_artifacts.items()
+        if k in loss_functions.Result.__annotations__.keys()
+    }
+    return loss_functions.Result(**loss_artifacts)
+
+
+@pytest.fixture
+def ground_truth(request: FixtureRequest) -> loss_functions.GroundTruth:
+    """Create a result set."""
+    loss_artifacts_type = request.param.get("loss_artifacts_type")
+    loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
+    loss_artifacts = {
+        k: v
+        for k, v in loss_artifacts.items()
+        if k in loss_functions.GroundTruth.__annotations__.keys()
+    }
+    return loss_functions.GroundTruth(**loss_artifacts)
+
+
+@pytest.fixture
+def loss(request: FixtureRequest) -> loss_functions.Result:
+    """Create a result set."""
+    loss_artifacts_type = request.param.get("loss_artifacts_type")
+    loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
+    return loss_artifacts.get("loss")
