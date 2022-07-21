@@ -9,12 +9,7 @@ from typing import Tuple
 
 import pytest
 
-from word2vect.ml.networks.features import Features
-from word2vect.ml.networks.fully_connected import (
-    HiddenLayers,
-    OutputLayer,
-    build_sequential_layers,
-)
+from word2vect.ml import networks
 
 
 @pytest.mark.parametrize(
@@ -30,12 +25,14 @@ from word2vect.ml.networks.fully_connected import (
     indirect=True,
 )
 def test_build_sequential_layers(
-    network_definition: Tuple[Features, HiddenLayers, OutputLayer]
+    network_definition: Tuple[
+        networks.Features, networks.HiddenLayers, networks.OutputLayer
+    ]
 ) -> None:
     """Test that the sequential model has the right size and properties."""
     features, hidden_layers, output_layer = network_definition
 
-    sequential_model = build_sequential_layers(
+    sequential_model = networks.build_sequential_layers(
         features, hidden_layers, output_layer
     )
 

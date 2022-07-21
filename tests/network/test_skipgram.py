@@ -8,7 +8,7 @@ Licence,
 import pytest
 import torch
 
-from word2vect.ml.networks.skipgram import SkipGram
+from word2vect.ml import networks
 
 
 @pytest.mark.parametrize(
@@ -23,7 +23,7 @@ from word2vect.ml.networks.skipgram import SkipGram
     ],
     indirect=True,
 )
-def test_forward_output_shape(skipgram: SkipGram) -> None:
+def test_forward_output_shape(skipgram: networks.SkipGram) -> None:
     """This function test that the output shapes are right."""
     x = torch.randint(
         low=0, high=skipgram.features.vocabulary.size - 1, size=(10,)
@@ -50,7 +50,7 @@ def test_forward_output_shape(skipgram: SkipGram) -> None:
     ],
     indirect=True,
 )
-def test_forward_output_probs(skipgram: SkipGram) -> None:
+def test_forward_output_probs(skipgram: networks.SkipGram) -> None:
     """This function test that the output shapes are right."""
     x = torch.randint(
         low=0, high=skipgram.features.vocabulary.size - 1, size=(10,)

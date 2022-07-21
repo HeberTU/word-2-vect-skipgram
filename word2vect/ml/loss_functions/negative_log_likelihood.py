@@ -7,6 +7,12 @@ Created on: 21/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from typing import (
+    Any,
+    Dict,
+    Optional,
+)
+
 import torch
 
 import word2vect.ml.loss_functions.interface as interface
@@ -15,9 +21,10 @@ import word2vect.ml.loss_functions.interface as interface
 class NLLLoss(interface.LossFunction):
     """Negative log likelihood loss implementation."""
 
-    def __init__(self):
+    def __init__(self, params: Optional[Dict[str, Any]] = None):
         """Initialize the class."""
-        self._torch_nlloss = torch.nn.NLLLoss()
+        params = params if params is not None else {"reduction": "mean"}
+        self._torch_nlloss = torch.nn.NLLLoss(**params)
 
     def __repr__(self) -> str:
         """Create the string representation."""
