@@ -76,20 +76,20 @@ class TrainingStats:
     def update(
         self,
         loss: torch.Tensor,
-        predictions: torch.Tensor,
+        prediction: torch.Tensor,
         target: Optional[torch.Tensor] = None,
     ) -> None:
         """Store the given statistics.
 
         Args:
             loss: calculated loss.
-            predictions: network predictions.
+            prediction: network predictions.
             target: ground truth labels.
 
         """
         self.loss.append(loss.unsqueeze(dim=0))
-        self.prediction.append(predictions)
-        if target:
+        self.prediction.append(prediction)
+        if target is not None:
             self.target.append(target)
 
     def flush(self):

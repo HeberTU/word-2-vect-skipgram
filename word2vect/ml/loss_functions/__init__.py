@@ -7,3 +7,11 @@ Created on: 21/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from .interface import (
+    GroundTruth,
+    LossFunction,
+    Result,
+    TrainingStats,
+)
+
+__all__ = ["TrainingStats", "LossFunction", "Result", "GroundTruth"]
