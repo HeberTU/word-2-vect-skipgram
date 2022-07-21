@@ -52,9 +52,7 @@ def test_forward_output_shape(skipgram: networks.SkipGram) -> None:
 )
 def test_forward_output_probs(skipgram: networks.SkipGram) -> None:
     """This function test that the output shapes are right."""
-    x = torch.randint(
-        low=0, high=skipgram.features.vocabulary.size - 1, size=(10,)
-    )
+    x = torch.Tensor([8, 18, 1, 7, 1, 18, 4, 17, 12, 3])
 
     skipgram.eval()
 
