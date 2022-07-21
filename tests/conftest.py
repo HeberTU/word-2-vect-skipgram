@@ -9,12 +9,14 @@ from string import ascii_letters
 from typing import Tuple
 
 import pytest
+import torch
 from _pytest.fixtures import FixtureRequest
 from torch.nn import (
     LogSoftmax,
     ReLU,
 )
 
+import word2vect.ml.loss_functions as loss_functions
 from word2vect.ml.networks.features import (
     Features,
     Vocabulary,
@@ -87,3 +89,19 @@ def skipgram(request: FixtureRequest) -> SkipGram:
     output_layer = get_output_layer()
 
     return SkipGram(features, hidden_layers, output_layer)
+
+
+@pytest.fixture
+def loss_artifacts() -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Create loss function artifacts."""
+    loss = torch.tensor([1])
+    predictions = torch.tensor([4, 5, 6])
+    target = torch.tensor([4, 5, 6])
+
+    return loss, predictions, target
+
+
+@pytest.fixture
+def training_stats() -> loss_functions.TrainingStats:
+    """Create a training stats instance."""
+    return loss_functions.TrainingStats()
