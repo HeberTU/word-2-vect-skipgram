@@ -5,21 +5,15 @@ Created on: 21/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-import enum
 from typing import Dict
 
 import torch
 
-
-class LossArtifactsType(enum.Enum):
-    """Available loss artifacts types."""
-
-    INTERFACE = enum.auto()
-    NLLLOSS = enum.auto()
+import word2vect.ml.loss_functions as loss_functions
 
 
 def get_loss_artifacts(
-    loss_artifacts_type: LossArtifactsType,
+    loss_artifacts_type: loss_functions.LossFunctionType,
 ) -> Dict[str, torch.Tensor]:
     """Create loss function artifacts."""
     nllloss_predictions = torch.Tensor(
@@ -31,12 +25,12 @@ def get_loss_artifacts(
     )
 
     _implementations = {
-        LossArtifactsType.INTERFACE: {
+        loss_functions.LossFunctionType.INTERFACE: {
             "loss": torch.tensor([1]),
             "prediction": torch.tensor([4, 5, 6]),
             "target": torch.tensor([4, 5, 6]),
         },
-        LossArtifactsType.NLLLOSS: {
+        loss_functions.LossFunctionType.NLLLOSS: {
             "loss": 1.8308,
             "prediction": nllloss_predictions,
             "target": torch.tensor([1, 0, 4]),

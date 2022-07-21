@@ -13,6 +13,14 @@ from .interface import (
     Result,
     TrainingStats,
 )
+from .loss_function_factory import LossFunctionType
 from .negative_log_likelihood import NLLLoss
 
-__all__ = ["TrainingStats", "LossFunction", "Result", "GroundTruth", "NLLLoss"]
+__all__ = [
+    "TrainingStats",
+    "LossFunction",
+    "Result",
+    "GroundTruth",
+    "NLLLoss",
+    "LossFunctionType",
+]

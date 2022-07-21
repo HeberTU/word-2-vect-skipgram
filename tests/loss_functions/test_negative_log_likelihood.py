@@ -8,10 +8,9 @@ Licence,
 import pytest
 import torch
 
-import tests.fixtures as w2v_fixtures
 import word2vect.ml.loss_functions as loss_functions
 
-TEST_PARAMS = {"loss_artifacts_type": w2v_fixtures.LossArtifactsType.NLLLOSS}
+TEST_PARAMS = {"loss_artifacts_type": loss_functions.LossFunctionType.NLLLOSS}
 
 
 @pytest.mark.unit
