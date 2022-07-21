@@ -5,27 +5,33 @@ Created on: 21/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from typing import Tuple
-
 import pytest
 import torch
 
+import tests.fixtures as w2v_fixtures
 import word2vect.ml.loss_functions as loss_functions
+
+TEST_PARAMS = {"loss_artifacts_type": w2v_fixtures.LossArtifactsType.INTERFACE}
 
 
 @pytest.mark.unit
+@pytest.mark.parametrize("result", [TEST_PARAMS], indirect=True)
+@pytest.mark.parametrize("loss", [TEST_PARAMS], indirect=True)
+@pytest.mark.parametrize("ground_truth", [TEST_PARAMS], indirect=True)
 def test_training_stats_updates(
-    loss_artifacts: Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
     training_stats: loss_functions.TrainingStats,
+    result: loss_functions.Result,
+    ground_truth: loss_functions.GroundTruth,
+    loss: torch.Tensor,
 ) -> None:
     """Test TrainingStats update method."""
-    loss, prediction, target = loss_artifacts
-
     assert len(training_stats.loss) == 0
     assert len(training_stats.prediction) == 0
     assert len(training_stats.target) == 0
 
-    training_stats.update(loss=loss, prediction=prediction, target=target)
+    training_stats.update(
+        loss=loss, prediction=result.prediction, target=ground_truth.target
+    )
 
     assert len(training_stats.loss) > 0
     assert len(training_stats.prediction) > 0
@@ -33,14 +39,19 @@ def test_training_stats_updates(
 
 
 @pytest.mark.unit
+@pytest.mark.parametrize("result", [TEST_PARAMS], indirect=True)
+@pytest.mark.parametrize("loss", [TEST_PARAMS], indirect=True)
+@pytest.mark.parametrize("ground_truth", [TEST_PARAMS], indirect=True)
 def test_training_stats_flush(
-    loss_artifacts: Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
     training_stats: loss_functions.TrainingStats,
+    result: loss_functions.Result,
+    ground_truth: loss_functions.GroundTruth,
+    loss: torch.Tensor,
 ) -> None:
     """Test TrainingStats flush method."""
-    loss, prediction, target = loss_artifacts
-
-    training_stats.update(loss=loss, prediction=prediction, target=target)
+    training_stats.update(
+        loss=loss, prediction=result.prediction, target=ground_truth.target
+    )
 
     assert len(training_stats.loss) > 0
     assert len(training_stats.prediction) > 0

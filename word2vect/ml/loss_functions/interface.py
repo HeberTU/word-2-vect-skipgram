@@ -52,7 +52,7 @@ class LossFunction(ABC):
 class Result:
     """Data structure used to store different net outputs."""
 
-    predictions: torch.Tensor
+    prediction: torch.Tensor
     log_prob: Optional[torch.Tensor] = None
     measures: Optional[Dict[str, torch.Tensor]] = None
 
