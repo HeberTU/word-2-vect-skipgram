@@ -1,0 +1,9 @@
+# -*- coding: utf-8 -*-
+"""Loss function library.
+
+This library implements the interface and implementation onf loss functions.
+
+Created on: 21/7/22
+@author: Heber Trujillo <heber.trj.urt@gmail.com>
+Licence,
+"""
