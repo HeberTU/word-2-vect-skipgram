@@ -23,12 +23,13 @@ class NLLLoss(interface.LossFunction):
 
     def __init__(self, params: Optional[Dict[str, Any]] = None):
         """Initialize the class."""
-        params = params if params is not None else {"reduction": "mean"}
-        self._torch_nlloss = torch.nn.NLLLoss(**params)
+        self.params = params if params is not None else {"reduction": "mean"}
+        self._torch_nlloss = torch.nn.NLLLoss(**self.params)
 
     def __repr__(self) -> str:
         """Create the string representation."""
-        return "NLLLoss()"
+        params = ", ".join([k + "=" + str(v) for k, v in self.params.items()])
+        return f"NLLLoss({params})"
 
     def compute(
         self, result: interface.Result, ground_truth: interface.GroundTruth
