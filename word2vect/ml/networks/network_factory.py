@@ -60,9 +60,7 @@ class NetworkFactory:
             NetworkArchitecture.SKIPGRAM: SkipGram
         }
 
-    def get_network(
-        self, network_architecture: NetworkArchitecture
-    ) -> nn.Module:
+    def create(self, network_architecture: NetworkArchitecture) -> nn.Module:
         """Instantiate the network, given a config and net architecture.
 
         Parameters
