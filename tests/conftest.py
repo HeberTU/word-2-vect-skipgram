@@ -15,6 +15,8 @@ from torch.nn import (
     ReLU,
 )
 
+import tests.fixtures as w2v_fixtures
+import word2vect.ml.loss_functions as loss_functions
 from word2vect.ml.networks.features import (
     Features,
     Vocabulary,
@@ -87,3 +89,43 @@ def skipgram(request: FixtureRequest) -> SkipGram:
     output_layer = get_output_layer()
 
     return SkipGram(features, hidden_layers, output_layer)
+
+
+@pytest.fixture
+def training_stats() -> loss_functions.TrainingStats:
+    """Create a training stats instance."""
+    return loss_functions.TrainingStats()
+
+
+@pytest.fixture
+def result(request: FixtureRequest) -> loss_functions.Result:
+    """Create a result set."""
+    loss_artifacts_type = request.param.get("loss_artifacts_type")
+    loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
+    loss_artifacts = {
+        k: v
+        for k, v in loss_artifacts.items()
+        if k in loss_functions.Result.__annotations__.keys()
+    }
+    return loss_functions.Result(**loss_artifacts)
+
+
+@pytest.fixture
+def ground_truth(request: FixtureRequest) -> loss_functions.GroundTruth:
+    """Create a result set."""
+    loss_artifacts_type = request.param.get("loss_artifacts_type")
+    loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
+    loss_artifacts = {
+        k: v
+        for k, v in loss_artifacts.items()
+        if k in loss_functions.GroundTruth.__annotations__.keys()
+    }
+    return loss_functions.GroundTruth(**loss_artifacts)
+
+
+@pytest.fixture
+def loss(request: FixtureRequest) -> loss_functions.Result:
+    """Create a result set."""
+    loss_artifacts_type = request.param.get("loss_artifacts_type")
+    loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
+    return loss_artifacts.get("loss")
