@@ -45,6 +45,8 @@ def main():
 
     pred = model(x)
 
+    print(pred)
+
     return pred
 
 
