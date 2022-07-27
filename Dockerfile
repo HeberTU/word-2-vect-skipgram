@@ -11,5 +11,6 @@ COPY pyproject.toml .
 RUN poetry config virtualenvs.create false \
     && poetry install
 
-COPY word2vect train.py ./
+COPY word2vect train.py data ./
 
+CMD ["python", "train.py"]
