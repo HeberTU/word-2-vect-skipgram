@@ -8,13 +8,13 @@ Licence,
 from .metrics_factory import (
     AverageStrategy,
     MetricConfig,
+    MetricsConfig,
     MetricType,
-    ModelMetrics,
 )
 
 __all__ = [
     "AverageStrategy",
     "MetricConfig",
-    "ModelMetrics",
+    "MetricsConfig",
     "MetricType",
 ]

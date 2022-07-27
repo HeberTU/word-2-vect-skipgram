@@ -16,15 +16,17 @@ from dataclasses import dataclass
 from typing import (
     Any,
     Dict,
+    List,
     Optional,
 )
 
 
 @dataclass(frozen=True)
-class ModelMetrics:
+class MetricsConfig:
     """Data structure to store model's metrics set-up."""
 
-    optimizing_metric: str
+    optimizing_metric: MetricConfig
+    secondary_metrics: List[MetricConfig]
 
 
 @dataclass(frozen=True)
