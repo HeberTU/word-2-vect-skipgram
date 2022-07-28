@@ -19,6 +19,7 @@ from dataclasses import (
     field,
 )
 from typing import (
+    Any,
     Dict,
     Iterable,
     List,
@@ -80,7 +81,7 @@ class Metric(ABC):
 
     metric_type: MetricType
     _metric_values: MetricValues
-    type: str
+    params: Optional[Dict[str, Any]] = None
 
     @property
     def metric_values(self) -> MetricValues:
