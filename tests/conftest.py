@@ -16,21 +16,18 @@ from torch.nn import (
 )
 
 import tests.fixtures as w2v_fixtures
-import word2vect.ml.loss_functions as loss_functions
-from word2vect.ml.networks.features import (
-    Features,
-    Vocabulary,
+from word2vect.ml import (
+    loss_functions,
+    metrics,
+    networks,
 )
-from word2vect.ml.networks.fully_connected import (
-    HiddenLayers,
-    OutputLayer,
-)
-from word2vect.ml.networks.skipgram import SkipGram
 
 
-def get_features(vocabulary_size: int, embedding_dim: int) -> Features:
+def get_features(
+    vocabulary_size: int, embedding_dim: int
+) -> networks.Features:
     """Get feature sample test."""
-    vocabulary = Vocabulary(
+    vocabulary = networks.Vocabulary(
         size=vocabulary_size,
         vocabulary_to_idx={
             ch: idx for idx, ch in enumerate(ascii_letters[:vocabulary_size])
@@ -40,25 +37,29 @@ def get_features(vocabulary_size: int, embedding_dim: int) -> Features:
         },
     )
 
-    return Features(vocabulary=vocabulary, embedding_dim=embedding_dim)
+    return networks.Features(
+        vocabulary=vocabulary, embedding_dim=embedding_dim
+    )
 
 
-def get_hidden_layers(hidden_dim: int, dropout: float) -> HiddenLayers:
+def get_hidden_layers(
+    hidden_dim: int, dropout: float
+) -> networks.HiddenLayers:
     """Get hidden layer sample test."""
-    return HiddenLayers(
+    return networks.HiddenLayers(
         hidden_dim=hidden_dim, activation=ReLU(), dropout=dropout
     )
 
 
-def get_output_layer():
+def get_output_layer() -> networks.OutputLayer:
     """Get output layer sample test."""
-    return OutputLayer(activation=LogSoftmax(dim=1))
+    return networks.OutputLayer(activation=LogSoftmax(dim=1))
 
 
 @pytest.fixture
 def network_definition(
     request: FixtureRequest,
-) -> Tuple[Features, HiddenLayers, OutputLayer]:
+) -> Tuple[networks.Features, networks.HiddenLayers, networks.OutputLayer]:
     """Generate a network definition."""
     hidden_dim = request.param.get("hidden_dim")
     dropout = request.param.get("dropout")
@@ -75,7 +76,7 @@ def network_definition(
 
 
 @pytest.fixture
-def skipgram(request: FixtureRequest) -> SkipGram:
+def skipgram(request: FixtureRequest) -> networks.SkipGram:
     """Create a skipgram model."""
     hidden_dim = request.param.get("hidden_dim")
     dropout = request.param.get("dropout")
@@ -88,7 +89,7 @@ def skipgram(request: FixtureRequest) -> SkipGram:
 
     output_layer = get_output_layer()
 
-    return SkipGram(features, hidden_layers, output_layer)
+    return networks.SkipGram(features, hidden_layers, output_layer)
 
 
 @pytest.fixture
@@ -129,3 +130,19 @@ def loss(request: FixtureRequest) -> loss_functions.Result:
     loss_artifacts_type = request.param.get("loss_artifacts_type")
     loss_artifacts = w2v_fixtures.get_loss_artifacts(loss_artifacts_type)
     return loss_artifacts.get("loss")
+
+
+@pytest.fixture
+def metric_values() -> metrics.MetricValues:
+    """Create a metric values instance."""
+    return metrics.MetricValues()
+
+
+@pytest.fixture
+def measurement(request: FixtureRequest) -> metrics.Measurement:
+    """Create a measurement set."""
+    metric_type = request.param.get("metric_type")
+    metrics_artifacts = {
+        metrics.MetricType.INTERFACE: {"value": 0.9, "batch_size": 512}
+    }
+    return metrics.Measurement(**metrics_artifacts.get(metric_type))
