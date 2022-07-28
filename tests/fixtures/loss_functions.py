@@ -27,8 +27,8 @@ def get_loss_artifacts(
     _implementations = {
         loss_functions.LossFunctionType.INTERFACE: {
             "loss": torch.tensor([1]),
-            "prediction": torch.tensor([4, 5, 6]),
-            "target": torch.tensor([4, 5, 6]),
+            "prediction": torch.tensor([0, 1, 2, 0, 1, 2]),
+            "target": torch.tensor([0, 2, 1, 0, 0, 1]),
         },
         loss_functions.LossFunctionType.NLLLOSS: {
             "loss": 1.8308,

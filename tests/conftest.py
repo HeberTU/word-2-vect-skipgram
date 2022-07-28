@@ -6,7 +6,10 @@ Created on: 18/7/22
 Licence,
 """
 from string import ascii_letters
-from typing import Tuple
+from typing import (
+    Tuple,
+    Type,
+)
 
 import pytest
 from _pytest.fixtures import FixtureRequest
@@ -136,6 +139,16 @@ def loss(request: FixtureRequest) -> loss_functions.Result:
 def metric_values() -> metrics.MetricValues:
     """Create a metric values instance."""
     return metrics.MetricValues()
+
+
+@pytest.fixture
+def metric(request: FixtureRequest) -> Type[metrics.Metric]:
+    """Create a metric values instance."""
+    metric_type = request.param.get("metric_type")
+
+    available_metrics = {metrics.MetricType.F1: metrics.F1Score}
+
+    return available_metrics.get(metric_type)()
 
 
 @pytest.fixture

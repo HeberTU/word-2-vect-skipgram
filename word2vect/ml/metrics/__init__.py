@@ -5,8 +5,10 @@ Created on: 27/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from .f1_score import F1Score
 from .interface import (
     Measurement,
+    Metric,
     MetricValues,
 )
 from .metrics_factory import (
@@ -23,4 +25,6 @@ __all__ = [
     "MetricType",
     "MetricValues",
     "Measurement",
+    "F1Score",
+    "Metric",
 ]
