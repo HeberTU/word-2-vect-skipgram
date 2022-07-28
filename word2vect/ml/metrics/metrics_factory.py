@@ -40,6 +40,7 @@ class MetricConfig:
 class MetricType(enum.Enum):
     """Available metrics."""
 
+    INTERFACE = enum.auto()
     F1 = enum.auto()
     PRECISION = enum.auto()
     RECALL = enum.auto()

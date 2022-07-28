@@ -5,6 +5,10 @@ Created on: 27/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from .interface import (
+    Measurement,
+    MetricValues,
+)
 from .metrics_factory import (
     AverageStrategy,
     MetricConfig,
@@ -17,4 +21,6 @@ __all__ = [
     "MetricConfig",
     "MetricsConfig",
     "MetricType",
+    "MetricValues",
+    "Measurement",
 ]
