@@ -17,6 +17,8 @@ from .metrics_factory import (
     MetricsConfig,
     MetricType,
 )
+from .precision_score import PrecisionScore
+from .recall_score import RecallScore
 
 __all__ = [
     "AverageStrategy",
@@ -27,4 +29,6 @@ __all__ = [
     "Measurement",
     "F1Score",
     "Metric",
+    "PrecisionScore",
+    "RecallScore",
 ]

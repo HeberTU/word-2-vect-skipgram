@@ -146,7 +146,11 @@ def metric(request: FixtureRequest) -> Type[metrics.Metric]:
     """Create a metric values instance."""
     metric_type = request.param.get("metric_type")
 
-    available_metrics = {metrics.MetricType.F1: metrics.F1Score}
+    available_metrics = {
+        metrics.MetricType.F1: metrics.F1Score,
+        metrics.MetricType.PRECISION: metrics.PrecisionScore,
+        metrics.MetricType.RECALL: metrics.RecallScore,
+    }
 
     return available_metrics.get(metric_type)()
 
@@ -156,6 +160,9 @@ def measurement(request: FixtureRequest) -> metrics.Measurement:
     """Create a measurement set."""
     metric_type = request.param.get("metric_type")
     metrics_artifacts = {
-        metrics.MetricType.INTERFACE: {"value": 0.9, "batch_size": 512}
+        metrics.MetricType.INTERFACE: {"value": 0.9, "batch_size": 512},
+        metrics.MetricType.F1: {"value": 0.26666666, "batch_size": 6},
+        metrics.MetricType.PRECISION: {"value": 0.33333333, "batch_size": 6},
+        metrics.MetricType.RECALL: {"value": 0.33333333, "batch_size": 6},
     }
     return metrics.Measurement(**metrics_artifacts.get(metric_type))
