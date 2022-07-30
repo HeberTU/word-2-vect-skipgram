@@ -5,20 +5,20 @@ Created on: 27/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from .f1_score import F1Score
 from .interface import (
     Measurement,
     Metric,
+    MetricType,
     MetricValues,
 )
 from .metrics_factory import (
     AverageStrategy,
+    F1Score,
     MetricConfig,
     MetricsConfig,
-    MetricType,
+    PrecisionScore,
+    RecallScore,
 )
-from .precision_score import PrecisionScore
-from .recall_score import RecallScore
 
 __all__ = [
     "AverageStrategy",

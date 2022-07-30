@@ -10,6 +10,7 @@ Licence,
 """
 from __future__ import annotations
 
+import enum
 from abc import (
     ABC,
     abstractmethod,
@@ -30,7 +31,14 @@ import numpy as np
 
 from word2vect.ml import loss_functions
 
-from .metrics_factory import MetricType
+
+class MetricType(enum.Enum):
+    """Available metrics."""
+
+    INTERFACE = enum.auto()
+    F1 = enum.auto()
+    PRECISION = enum.auto()
+    RECALL = enum.auto()
 
 
 @dataclass

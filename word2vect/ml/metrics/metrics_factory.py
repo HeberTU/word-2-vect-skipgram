@@ -18,7 +18,16 @@ from typing import (
     Dict,
     List,
     Optional,
+    Type,
 )
+
+from word2vect.ml.metrics.f1_score import F1Score
+from word2vect.ml.metrics.interface import (
+    Metric,
+    MetricType,
+)
+from word2vect.ml.metrics.precision_score import PrecisionScore
+from word2vect.ml.metrics.recall_score import RecallScore
 
 
 @dataclass(frozen=True)
@@ -37,18 +46,46 @@ class MetricConfig:
     params: Optional[Dict[str, Any]] = None
 
 
-class MetricType(enum.Enum):
-    """Available metrics."""
-
-    INTERFACE = enum.auto()
-    F1 = enum.auto()
-    PRECISION = enum.auto()
-    RECALL = enum.auto()
-
-
 class AverageStrategy(enum.Enum):
     """Available metrics reduction strategies."""
 
     MICRO = "micro"
     MACRO = "macro"
     WEIGHTED = "weighted"
+
+
+class MetricFactory:
+    """Loss Function Factory class.
+
+    This is a creational class used to instantiate the different loss function
+    implementations.
+    """
+
+    def __init__(self, metric_config: MetricConfig) -> MetricFactory:
+        """Instantiate the metric factory.
+
+        Args:
+            metric_config: Metric configuration params.
+        """
+        self._config = metric_config
+        self._metrics = {
+            MetricType.F1: F1Score,
+            MetricType.PRECISION: PrecisionScore,
+            MetricType.RECALL: RecallScore,
+        }
+
+    def create(self, metric_type: MetricType) -> Type[Metric]:
+        """Create a metric.
+
+        Args:
+            metric_type: metric type.
+
+        Returns:
+            metric.
+        """
+        metric = self._metrics.get(metric_type, None)
+
+        if metric is None:
+            raise NotImplementedError(f"{metric_type} not implemented.")
+
+        return metric(self._config.params)
