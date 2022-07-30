@@ -8,7 +8,7 @@ Licence,
 import pytest
 import torch
 
-import word2vect.ml.loss_functions as loss_functions
+from word2vect.ml import loss_functions
 
 TEST_PARAMS = {
     "loss_artifacts_type": loss_functions.LossFunctionType.INTERFACE

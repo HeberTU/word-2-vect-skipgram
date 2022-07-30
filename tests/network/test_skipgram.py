@@ -60,4 +60,4 @@ def test_forward_output_probs(skipgram: networks.SkipGram) -> None:
 
     with torch.no_grad():
         outout = skipgram(x)
-    assert float(outout.exp().sum()) == 10
+    assert float(outout.exp().sum()) == pytest.approx(10, 0.0001)
