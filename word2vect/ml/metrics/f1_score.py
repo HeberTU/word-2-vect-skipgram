@@ -11,6 +11,7 @@ import dataclasses
 from typing import (
     Any,
     Dict,
+    Optional,
 )
 
 from sklearn import metrics as sklearn_metrics
@@ -27,9 +28,7 @@ class F1Score(interface.Metric):
     _metric_values: interface.MetricValues = dataclasses.field(
         default_factory=lambda: interface.MetricValues()
     )
-    params: Dict[str, Any] = dataclasses.field(
-        default_factory=lambda: {"average": "macro"}
-    )
+    params: Optional[Dict[str, Any]] = None
 
     def measure(
         self,
@@ -45,6 +44,8 @@ class F1Score(interface.Metric):
         Returns:
             measurement: F1-score's measurement instance.
         """
+        self.params = self.params if self.params else {"average": "macro"}
+
         f1_score = sklearn_metrics.f1_score(
             y_true=ground_truth.target, y_pred=result.prediction, **self.params
         )
