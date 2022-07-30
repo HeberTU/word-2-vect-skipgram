@@ -163,6 +163,6 @@ def measurement(request: FixtureRequest) -> metrics.Measurement:
         metrics.MetricType.INTERFACE: {"value": 0.9, "batch_size": 512},
         metrics.MetricType.F1: {"value": 0.26666666, "batch_size": 6},
         metrics.MetricType.PRECISION: {"value": 0.33333333, "batch_size": 6},
-        metrics.MetricType.RECALL: {"value": 0.33333333, "batch_size": 6},
+        metrics.MetricType.RECALL: {"value": 0.2222222, "batch_size": 6},
     }
     return metrics.Measurement(**metrics_artifacts.get(metric_type))
