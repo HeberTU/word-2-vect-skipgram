@@ -10,6 +10,8 @@ from .interface import (
     Metric,
     MetricType,
     MetricValues,
+    ModelMetrics,
+    ModelsRepr,
 )
 from .metrics_factory import (
     AverageStrategy,
@@ -31,4 +33,6 @@ __all__ = [
     "Metric",
     "PrecisionScore",
     "RecallScore",
+    "ModelsRepr",
+    "ModelMetrics",
 ]
