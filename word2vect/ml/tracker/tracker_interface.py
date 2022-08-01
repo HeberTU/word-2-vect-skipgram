@@ -100,15 +100,15 @@ class TrainingTracker(ABC):
 
     @abstractmethod
     def log_metrics(
-        self, metric: metrics.ModelMetrics, model_name: str, step: int
+        self, model_metrics: metrics.ModelMetrics, model_name: str, step: int
     ) -> None:
         """Log metrics."""
         raise NotImplementedError()
 
     @abstractmethod
-    def log_learning_stats(
+    def log_training_stats(
         self,
-        learning_stats: loss_functions.TrainingStats,
+        training_stats: loss_functions.TrainingStats,
         model_name: str,
         step: int,
     ) -> None:
