@@ -32,6 +32,14 @@ import numpy as np
 from word2vect.ml import loss_functions
 
 
+@dataclass(frozen=True)
+class ModelsRepr:
+    """Model Representation."""
+
+    raw_repr: str
+    hashed_repr: str
+
+
 class MetricType(enum.Enum):
     """Available metrics."""
 
