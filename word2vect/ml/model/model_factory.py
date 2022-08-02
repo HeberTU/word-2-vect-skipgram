@@ -11,4 +11,4 @@ import enum
 class ModelType(enum.Enum):
     """Available model types."""
 
-    NLP: enum.auto()
+    WORD2VECT: enum.auto()
