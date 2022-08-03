@@ -13,7 +13,11 @@ from .interface import (
     Result,
     TrainingStats,
 )
-from .loss_function_factory import LossFunctionType
+from .loss_function_factory import (
+    LossFunctionConfig,
+    LossFunctionFactory,
+    LossFunctionType,
+)
 from .negative_log_likelihood import NLLLoss
 
 __all__ = [
@@ -23,4 +27,6 @@ __all__ = [
     "GroundTruth",
     "NLLLoss",
     "LossFunctionType",
+    "LossFunctionFactory",
+    "LossFunctionConfig",
 ]
