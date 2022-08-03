@@ -17,6 +17,7 @@ from .metrics_factory import (
     AverageStrategy,
     F1Score,
     MetricConfig,
+    MetricFactory,
     MetricsConfig,
     PrecisionScore,
     RecallScore,
@@ -35,4 +36,5 @@ __all__ = [
     "RecallScore",
     "ModelsRepr",
     "ModelMetrics",
+    "MetricFactory",
 ]
