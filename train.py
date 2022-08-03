@@ -5,15 +5,20 @@ Created on: 21/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-import torch
 from torch import nn
+from torch.optim import SGD
 
 from word2vect.data.data_prep import (
     create_lookup_tables,
     load_data,
     preprocess,
 )
-from word2vect.ml import networks
+from word2vect.ml import (
+    loss_functions,
+    metrics,
+    model,
+    networks,
+)
 
 
 def main():
@@ -37,17 +42,51 @@ def main():
         output_layer=networks.OutputLayer(activation=nn.LogSoftmax(dim=1)),
     )
 
-    model = networks.NetworkFactory(network_config=network_config).create(
+    network = networks.NetworkFactory(network_config=network_config).create(
         network_architecture=networks.NetworkArchitecture.SKIPGRAM
     )
 
-    x = torch.tensor([1])
+    f1_score = metrics.MetricFactory(
+        metric_config=metrics.MetricConfig()
+    ).create(metric_type=metrics.MetricType.F1)
 
-    pred = model(x)
+    recall_score = metrics.MetricFactory(
+        metric_config=metrics.MetricConfig()
+    ).create(metric_type=metrics.MetricType.RECALL)
 
-    print(pred)
+    precision_score = metrics.MetricFactory(
+        metric_config=metrics.MetricConfig()
+    ).create(metric_type=metrics.MetricType.PRECISION)
 
-    return pred
+    model_metrics = metrics.ModelMetrics(
+        optimizing_metric=f1_score,
+        secondary_metrics={
+            "recall_score": recall_score,
+            "precision_score": precision_score,
+        },
+    )
+
+    model_config = model.ModelConfig(
+        model_type=model.ModelType.WORD2VECT,
+        model_name="word2vect_v01",
+        gradient_clipping_value=1,
+    )
+
+    optimizer = SGD(network.parameters(), lr=0.1, momentum=0.9)
+
+    loss_function = loss_functions.LossFunctionFactory(
+        loss_function_config=loss_functions.LossFunctionConfig()
+    ).create(loss_function_type=loss_functions.LossFunctionType.NLLLOSS)
+
+    word2vect_model = model.Word2VectModel(
+        network=networks,
+        model_metrics=model_metrics,
+        model_config=model_config,
+        optimizer=optimizer,
+        loss_function=loss_function,
+    )
+
+    return word2vect_model
 
 
 if __name__ == "__main__":
