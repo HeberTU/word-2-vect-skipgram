@@ -30,7 +30,6 @@ class LossFunctionType(enum.Enum):
 class LossFunctionConfig:
     """Data structure to store loss function config."""
 
-    loss_function_type: LossFunctionType
     params: Optional[Dict[str, Any]] = None
 
 
