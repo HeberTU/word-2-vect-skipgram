@@ -79,7 +79,7 @@ def main():
     ).create(loss_function_type=loss_functions.LossFunctionType.NLLLOSS)
 
     word2vect_model = model.Word2VectModel(
-        network=networks,
+        network=network,
         model_metrics=model_metrics,
         model_config=model_config,
         optimizer=optimizer,
