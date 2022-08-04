@@ -5,14 +5,17 @@ Created on: 18/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from string import ascii_letters
 from typing import (
+    Dict,
     Tuple,
     Type,
 )
 
+import numpy as np
 import pytest
+import torch
 from _pytest.fixtures import FixtureRequest
+from torch import nn
 from torch.nn import (
     LogSoftmax,
     ReLU,
@@ -22,22 +25,22 @@ import tests.fixtures as w2v_fixtures
 from word2vect.ml import (
     loss_functions,
     metrics,
+    model,
     networks,
 )
 
 
 def get_features(
-    vocabulary_size: int, embedding_dim: int
+    vocabulary_size: int,
+    embedding_dim: int,
+    vocabulary_to_idx: Dict[str, int],
+    idx_to_vocabulary: Dict[int, str],
 ) -> networks.Features:
     """Get feature sample test."""
     vocabulary = networks.Vocabulary(
         size=vocabulary_size,
-        vocabulary_to_idx={
-            ch: idx for idx, ch in enumerate(ascii_letters[:vocabulary_size])
-        },
-        idx_to_vocabulary={
-            idx: ch for idx, ch in enumerate(ascii_letters[:vocabulary_size])
-        },
+        vocabulary_to_idx=vocabulary_to_idx,
+        idx_to_vocabulary=idx_to_vocabulary,
     )
 
     return networks.Features(
@@ -64,14 +67,23 @@ def network_definition(
     request: FixtureRequest,
 ) -> Tuple[networks.Features, networks.HiddenLayers, networks.OutputLayer]:
     """Generate a network definition."""
-    hidden_dim = request.param.get("hidden_dim")
-    dropout = request.param.get("dropout")
-    vocabulary_size = request.param.get("vocabulary_size")
-    embedding_dim = request.param.get("embedding_dim")
+    network_architecture = request.param.get("network_architecture")
 
-    features = get_features(vocabulary_size, embedding_dim)
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
 
-    hidden_layers = get_hidden_layers(hidden_dim, dropout)
+    features = get_features(
+        vocabulary_size=network_artifacts.get("vocabulary_size"),
+        embedding_dim=network_artifacts.get("embedding_dim"),
+        vocabulary_to_idx=network_artifacts.get("vocabulary_to_idx"),
+        idx_to_vocabulary=network_artifacts.get("idx_to_vocabulary"),
+    )
+
+    hidden_layers = get_hidden_layers(
+        network_artifacts.get("hidden_dim"),
+        network_artifacts.get("dropout"),
+    )
 
     output_layer = get_output_layer()
 
@@ -79,20 +91,37 @@ def network_definition(
 
 
 @pytest.fixture
-def skipgram(request: FixtureRequest) -> networks.SkipGram:
+def network(request: FixtureRequest) -> Type[nn.Module]:
     """Create a skipgram model."""
-    hidden_dim = request.param.get("hidden_dim")
-    dropout = request.param.get("dropout")
-    vocabulary_size = request.param.get("vocabulary_size")
-    embedding_dim = request.param.get("embedding_dim")
+    network_architecture = request.param.get("network_architecture")
 
-    features = get_features(vocabulary_size, embedding_dim)
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
+    network_config = networks.NetworkConfig(
+        features=networks.Features(
+            vocabulary=networks.Vocabulary(
+                size=network_artifacts.get("vocabulary_size"),
+                vocabulary_to_idx=network_artifacts.get("vocabulary_to_idx"),
+                idx_to_vocabulary=network_artifacts.get("idx_to_vocabulary"),
+            ),
+            embedding_dim=network_artifacts.get("embedding_dim"),
+        ),
+        hidden_layers=networks.HiddenLayers(
+            hidden_dim=network_artifacts.get("hidden_dim"),
+            activation=network_artifacts.get("activation"),
+            dropout=network_artifacts.get("dropout"),
+        ),
+        output_layer=networks.OutputLayer(
+            activation=network_artifacts.get("activation_out")
+        ),
+    )
 
-    hidden_layers = get_hidden_layers(hidden_dim, dropout)
+    network = networks.NetworkFactory(network_config=network_config).create(
+        network_architecture=network_architecture
+    )
 
-    output_layer = get_output_layer()
-
-    return networks.SkipGram(features, hidden_layers, output_layer)
+    return network
 
 
 @pytest.fixture
@@ -166,3 +195,23 @@ def measurement(request: FixtureRequest) -> metrics.Measurement:
         metrics.MetricType.RECALL: {"value": 0.2222222, "batch_size": 6},
     }
     return metrics.Measurement(**metrics_artifacts.get(metric_type))
+
+
+@pytest.fixture
+def batch_data(request: FixtureRequest) -> model.BatchData:
+    """Create a batch data instance."""
+    network_architecture = request.param.get("network_architecture")
+
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
+    idx_to_vocabulary = network_artifacts.get("idx_to_vocabulary")
+
+    torch.manual_seed(27)
+    word_idx = torch.randint(
+        low=0, high=network_artifacts.get("vocabulary_size") - 1, size=(10,)
+    )
+
+    words = np.array(idx_to_vocabulary.get(int(idx)) for idx in word_idx)
+
+    return model.BatchData(word_idx, words)

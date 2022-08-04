@@ -14,14 +14,7 @@ from word2vect.ml import networks
 
 @pytest.mark.parametrize(
     "network_definition",
-    [
-        {
-            "vocabulary_size": 20,
-            "embedding_dim": 10,
-            "hidden_dim": [5],
-            "dropout": 0.2,
-        }
-    ],
+    [{"network_architecture": networks.NetworkArchitecture.SKIPGRAM}],
     indirect=True,
 )
 def test_build_sequential_layers(

@@ -8,6 +8,7 @@ Licence,
 import torch
 from torch import nn
 
+from word2vect.ml import model
 from word2vect.ml.networks.features import Features
 from word2vect.ml.networks.fully_connected import (
     HiddenLayers,
@@ -46,15 +47,26 @@ class SkipGram(nn.Module):
             self.features, self.hidden_layers, self.output_layer
         )
 
-    def forward(self, x: torch.LongTensor) -> torch.FloatTensor:
+    def forward(self, batch_data: model.BatchData) -> torch.FloatTensor:
         """Forward pass implementation.
 
         Args:
-            x: feature batch.
+            batch_data: batch data.
 
         Returns:
             output: network predictions.
         """
+        x = batch_data.word_idx
         x = self.embeddings(x)
         output = self.fc_sequential(x)
         return output
+
+    def __repr__(self):
+        """Create a human-readable network representation."""
+        args = [
+            f"\nembeddings={self.embeddings}",
+            f"\nfc_sequential={self.fc_sequential}",
+            f"\noutputs={self.output_layer}",
+        ]
+
+        return f"FCNetwork({', '.join(args)})"
