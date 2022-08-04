@@ -42,7 +42,6 @@ class MetricsConfig:
 class MetricConfig:
     """Data structure for storing metric configuration."""
 
-    metric_type: MetricType
     params: Optional[Dict[str, Any]] = None
 
 

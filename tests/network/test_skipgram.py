@@ -5,59 +5,59 @@ Created on: 18/7/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+from typing import Type
+
 import pytest
 import torch
+from torch import nn
 
-from word2vect.ml import networks
+from word2vect.ml import (
+    model,
+    networks,
+)
 
 
 @pytest.mark.parametrize(
-    "skipgram",
-    [
-        {
-            "vocabulary_size": 20,
-            "embedding_dim": 10,
-            "hidden_dim": [5],
-            "dropout": 0.2,
-        }
-    ],
+    "network",
+    [{"network_architecture": networks.NetworkArchitecture.SKIPGRAM}],
     indirect=True,
 )
-def test_forward_output_shape(skipgram: networks.SkipGram) -> None:
+@pytest.mark.parametrize(
+    "batch_data",
+    [{"network_architecture": networks.NetworkArchitecture.SKIPGRAM}],
+    indirect=True,
+)
+def test_forward_output_shape(
+    network: Type[nn.Module],
+    batch_data: model.BatchData,
+) -> None:
     """This function test that the output shapes are right."""
-    x = torch.randint(
-        low=0, high=skipgram.features.vocabulary.size - 1, size=(10,)
-    )
-
-    skipgram.eval()
+    network.eval()
 
     with torch.no_grad():
-        outout = skipgram(x)
+        outout = network(batch_data)
 
     assert outout.shape[0] == 10
-    assert outout.shape[1] == skipgram.features.vocabulary.size
+    assert outout.shape[1] == network.features.vocabulary.size
 
 
 @pytest.mark.parametrize(
-    "skipgram",
-    [
-        {
-            "vocabulary_size": 20,
-            "embedding_dim": 10,
-            "hidden_dim": [5],
-            "dropout": 0.2,
-        }
-    ],
+    "network",
+    [{"network_architecture": networks.NetworkArchitecture.SKIPGRAM}],
     indirect=True,
 )
-def test_forward_output_probs(skipgram: networks.SkipGram) -> None:
+@pytest.mark.parametrize(
+    "batch_data",
+    [{"network_architecture": networks.NetworkArchitecture.SKIPGRAM}],
+    indirect=True,
+)
+def test_forward_output_probs(
+    network: Type[nn.Module],
+    batch_data: model.BatchData,
+) -> None:
     """This function test that the output shapes are right."""
-    x = torch.randint(
-        low=0, high=skipgram.features.vocabulary.size - 1, size=(10,)
-    )
-
-    skipgram.eval()
+    network.eval()
 
     with torch.no_grad():
-        outout = skipgram(x)
+        outout = network(batch_data)
     assert float(outout.exp().sum()) == pytest.approx(10, 0.0001)

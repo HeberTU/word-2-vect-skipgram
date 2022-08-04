@@ -25,6 +25,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Type,
 )
 
 import numpy as np
@@ -53,8 +54,10 @@ class MetricType(enum.Enum):
 class ModelMetrics:
     """Data Structure to store model metrics."""
 
-    optimizing_metric: Metric
-    secondary_metrics: Optional[Dict[str, Metric]] = None
+    optimizing_metric: Type[Metric]
+    secondary_metrics: Optional[Dict[str, Type[Metric]]] = None
+    log_every_n_steps: int = 100
+    _models_repr: ModelsRepr = field(init=False, repr=False)
 
     def get_metrics(self) -> Iterable[Metric]:
         """Retrieve all metrics in a generator format.
