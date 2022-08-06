@@ -175,26 +175,32 @@ def metric(request: FixtureRequest) -> Type[metrics.Metric]:
     """Create a metric values instance."""
     metric_type = request.param.get("metric_type")
 
-    available_metrics = {
-        metrics.MetricType.F1: metrics.F1Score,
-        metrics.MetricType.PRECISION: metrics.PrecisionScore,
-        metrics.MetricType.RECALL: metrics.RecallScore,
-    }
+    metrics_artifacts = w2v_fixtures.get_metrics_artifacts(
+        metric_type=metric_type,
+    )
 
-    return available_metrics.get(metric_type)()
+    _metric = metrics.MetricFactory(
+        metric_config=metrics.MetricConfig(
+            params=metrics_artifacts.get("params")
+        )
+    ).create(metric_type=metric_type)
+
+    return _metric
 
 
 @pytest.fixture
 def measurement(request: FixtureRequest) -> metrics.Measurement:
     """Create a measurement set."""
     metric_type = request.param.get("metric_type")
+    metrics_artifacts = w2v_fixtures.get_metrics_artifacts(
+        metric_type=metric_type,
+    )
     metrics_artifacts = {
-        metrics.MetricType.INTERFACE: {"value": 0.9, "batch_size": 512},
-        metrics.MetricType.F1: {"value": 0.26666666, "batch_size": 6},
-        metrics.MetricType.PRECISION: {"value": 0.33333333, "batch_size": 6},
-        metrics.MetricType.RECALL: {"value": 0.2222222, "batch_size": 6},
+        k: v
+        for k, v in metrics_artifacts.items()
+        if k in metrics.Measurement.__annotations__.keys()
     }
-    return metrics.Measurement(**metrics_artifacts.get(metric_type))
+    return metrics.Measurement(**metrics_artifacts)
 
 
 @pytest.fixture
