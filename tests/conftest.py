@@ -181,9 +181,10 @@ def metric(request: FixtureRequest) -> Type[metrics.Metric]:
 
     _metric = metrics.MetricFactory(
         metric_config=metrics.MetricConfig(
-            params=metrics_artifacts.get("params")
+            metric_type=metric_type,
+            params=metrics_artifacts.get("params"),
         )
-    ).create(metric_type=metric_type)
+    ).create()
 
     return _metric
 
