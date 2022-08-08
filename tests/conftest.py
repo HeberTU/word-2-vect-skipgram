@@ -98,23 +98,9 @@ def network(request: FixtureRequest) -> Type[nn.Module]:
     network_artifacts = w2v_fixtures.get_network_artifacts(
         network_architecture
     )
-    network_config = networks.NetworkConfig(
-        features=networks.Features(
-            vocabulary=networks.Vocabulary(
-                size=network_artifacts.get("vocabulary_size"),
-                vocabulary_to_idx=network_artifacts.get("vocabulary_to_idx"),
-                idx_to_vocabulary=network_artifacts.get("idx_to_vocabulary"),
-            ),
-            embedding_dim=network_artifacts.get("embedding_dim"),
-        ),
-        hidden_layers=networks.HiddenLayers(
-            hidden_dim=network_artifacts.get("hidden_dim"),
-            activation=network_artifacts.get("activation"),
-            dropout=network_artifacts.get("dropout"),
-        ),
-        output_layer=networks.OutputLayer(
-            activation=network_artifacts.get("activation_out")
-        ),
+
+    network_config = w2v_fixtures.get_network_config(
+        network_artifacts=network_artifacts
     )
 
     network = networks.NetworkFactory(network_config=network_config).create(

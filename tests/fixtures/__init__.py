@@ -7,10 +7,14 @@ Licence,
 """
 from .loss_functions import get_loss_artifacts
 from .metrics import get_metrics_artifacts
-from .network import get_network_artifacts
+from .network import (
+    get_network_artifacts,
+    get_network_config,
+)
 
 __all__ = [
     "get_loss_artifacts",
     "get_network_artifacts",
     "get_metrics_artifacts",
+    "get_network_config",
 ]
