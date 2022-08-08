@@ -5,7 +5,11 @@ Created on: 23/6/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
-from .model_factory import ModelType
+from .model_factory import (
+    ModelDefinition,
+    ModelFactory,
+    ModelType,
+)
 from .model_interface import (
     BatchData,
     ModelConfig,
@@ -17,4 +21,6 @@ __all__ = [
     "BatchData",
     "ModelConfig",
     "ModelType",
+    "ModelDefinition",
+    "ModelFactory",
 ]
