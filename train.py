@@ -45,26 +45,25 @@ def main():
     network = networks.NetworkFactory(network_config=network_config).create(
         network_architecture=networks.NetworkArchitecture.SKIPGRAM
     )
-
-    f1_score = metrics.MetricFactory(
-        metric_config=metrics.MetricConfig()
-    ).create(metric_type=metrics.MetricType.F1)
-
-    recall_score = metrics.MetricFactory(
-        metric_config=metrics.MetricConfig()
-    ).create(metric_type=metrics.MetricType.RECALL)
-
-    precision_score = metrics.MetricFactory(
-        metric_config=metrics.MetricConfig()
-    ).create(metric_type=metrics.MetricType.PRECISION)
-
-    model_metrics = metrics.ModelMetrics(
-        optimizing_metric=f1_score,
-        secondary_metrics={
-            "recall_score": recall_score,
-            "precision_score": precision_score,
-        },
+    metrics_config = metrics.MetricsConfig(
+        optimizing_metric=metrics.MetricConfig(
+            metric_type=metrics.MetricType.F1, params={"average": "macro"}
+        ),
+        secondary_metrics=[
+            metrics.MetricConfig(
+                metric_type=metrics.MetricType.PRECISION,
+                params={"average": "macro"},
+            ),
+            metrics.MetricConfig(
+                metric_type=metrics.MetricType.RECALL,
+                params={"average": "macro"},
+            ),
+        ],
     )
+
+    model_metrics = metrics.ModelMetricsFactory(
+        metrics_config=metrics_config
+    ).create()
 
     model_config = model.ModelConfig(
         model_type=model.ModelType.WORD2VECT,
