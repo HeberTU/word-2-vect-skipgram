@@ -25,6 +25,7 @@ from word2vect.ml.metrics.f1_score import F1Score
 from word2vect.ml.metrics.interface import (
     Metric,
     MetricType,
+    ModelMetrics,
 )
 from word2vect.ml.metrics.precision_score import PrecisionScore
 from word2vect.ml.metrics.recall_score import RecallScore
@@ -35,14 +36,20 @@ class MetricsConfig:
     """Data structure to store model's metrics set-up."""
 
     optimizing_metric: MetricConfig
-    secondary_metrics: List[MetricConfig]
+    secondary_metrics: Optional[List[MetricConfig]] = None
 
 
 @dataclass(frozen=True)
 class MetricConfig:
     """Data structure for storing metric configuration."""
 
+    metric_type: MetricType
     params: Optional[Dict[str, Any]] = None
+
+    @property
+    def name(self) -> str:
+        """Get metric name."""
+        return self.metric_type.value
 
 
 class AverageStrategy(enum.Enum):
@@ -54,7 +61,7 @@ class AverageStrategy(enum.Enum):
 
 
 class MetricFactory:
-    """Loss Function Factory class.
+    """Metric Factory class.
 
     This is a creational class used to instantiate the different loss function
     implementations.
@@ -64,27 +71,66 @@ class MetricFactory:
         """Instantiate the metric factory.
 
         Args:
-            metric_config: Metric configuration params.
+            params: Metric configuration params.
         """
-        self._config = metric_config
+        self._metric_config = metric_config
         self._metrics = {
             MetricType.F1: F1Score,
             MetricType.PRECISION: PrecisionScore,
             MetricType.RECALL: RecallScore,
         }
 
-    def create(self, metric_type: MetricType) -> Type[Metric]:
-        """Create a metric.
-
-        Args:
-            metric_type: metric type.
+    def create(self) -> Type[Metric]:
+        """Create a metric using the init config.
 
         Returns:
             metric.
         """
-        metric = self._metrics.get(metric_type, None)
+        metric = self._metrics.get(self._metric_config.metric_type, None)
 
         if metric is None:
-            raise NotImplementedError(f"{metric_type} not implemented.")
+            raise NotImplementedError(
+                f"{self._metric_config.metric_type} not implemented."
+            )
 
-        return metric(self._config.params)
+        return metric(self._metric_config.params)
+
+
+class ModelMetricsFactory:
+    """Model Metrics Factory class.
+
+    This is a creational class used to instantiate the different loss function
+    implementations.
+    """
+
+    def __init__(self, metrics_config: MetricsConfig) -> ModelMetricsFactory:
+        """Instantiate a model metrics factory.
+
+        Args:
+            metrics_config: metrics config.
+        """
+        self._config = metrics_config
+
+    def create(self) -> ModelMetrics:
+        """Create a model metrics instance using the init config.
+
+        Returns:
+            model_metrics: model metrics.
+        """
+        optimizing_metric = MetricFactory(
+            metric_config=self._config.optimizing_metric
+        ).create()
+
+        if self._config.secondary_metrics is not None:
+            secondary_metrics = {}
+            for metric_config in self._config.secondary_metrics:
+                secondary_metrics[metric_config.name] = MetricFactory(
+                    metric_config=metric_config
+                ).create()
+        else:
+            secondary_metrics = None
+
+        return ModelMetrics(
+            optimizing_metric=optimizing_metric,
+            secondary_metrics=secondary_metrics,
+        )
