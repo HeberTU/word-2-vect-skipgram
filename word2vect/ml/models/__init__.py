@@ -9,10 +9,12 @@ from .model_factory import (
     ModelDefinition,
     ModelFactory,
     ModelType,
+    OptimizerConfig,
 )
 from .model_interface import (
     BatchData,
     ModelConfig,
+    NNModel,
 )
 from .word2vect_model import Word2VectModel
 
@@ -23,4 +25,6 @@ __all__ = [
     "ModelType",
     "ModelDefinition",
     "ModelFactory",
+    "OptimizerConfig",
+    "NNModel",
 ]
