@@ -25,7 +25,7 @@ import tests.fixtures as w2v_fixtures
 from word2vect.ml import (
     loss_functions,
     metrics,
-    model,
+    models,
     networks,
 )
 
@@ -100,12 +100,13 @@ def network(request: FixtureRequest) -> Type[nn.Module]:
     )
 
     network_config = w2v_fixtures.get_network_config(
-        network_artifacts=network_artifacts
+        network_architecture=network_architecture,
+        network_artifacts=network_artifacts,
     )
 
-    network = networks.NetworkFactory(network_config=network_config).create(
-        network_architecture=network_architecture
-    )
+    network_factory = networks.NetworkFactory(network_config=network_config)
+
+    network = network_factory.create()
 
     return network
 
@@ -191,7 +192,7 @@ def measurement(request: FixtureRequest) -> metrics.Measurement:
 
 
 @pytest.fixture
-def batch_data(request: FixtureRequest) -> model.BatchData:
+def batch_data(request: FixtureRequest) -> models.BatchData:
     """Create a batch data instance."""
     network_architecture = request.param.get("network_architecture")
 
@@ -207,4 +208,4 @@ def batch_data(request: FixtureRequest) -> model.BatchData:
 
     words = np.array(idx_to_vocabulary.get(int(idx)) for idx in word_idx)
 
-    return model.BatchData(word_idx, words)
+    return models.BatchData(word_idx, words)
