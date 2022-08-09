@@ -29,7 +29,7 @@ def get_model_artifacts(model_type: models.ModelType) -> Dict[str, Any]:
         }
     }
 
-    model_artifacts = _implementations(model_type, None)
+    model_artifacts = _implementations.get(model_type, None)
 
     return model_artifacts
 
