@@ -17,7 +17,7 @@ from word2vect.data.data_prep import (
     preprocess,
     subsampling,
 )
-from word2vect.ml.model.architecture import SkipGram
+from word2vect.ml.models.architecture import SkipGram
 from word2vect.ml.train.train import train
 
 text = load_data("data/text8")
