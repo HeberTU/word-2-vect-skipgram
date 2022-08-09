@@ -206,7 +206,7 @@ def batch_data(request: FixtureRequest) -> models.BatchData:
         low=0, high=network_artifacts.get("vocabulary_size") - 1, size=(10,)
     )
 
-    words = np.array(idx_to_vocabulary.get(int(idx)) for idx in word_idx)
+    words = np.array([idx_to_vocabulary.get(int(idx)) for idx in word_idx])
 
     return models.BatchData(word_idx, words)
 
