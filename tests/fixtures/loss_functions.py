@@ -9,7 +9,10 @@ from typing import Dict
 
 import torch
 
-import word2vect.ml.loss_functions as loss_functions
+from word2vect.ml import (
+    loss_functions,
+    models,
+)
 
 
 def get_loss_artifacts(
@@ -40,3 +43,27 @@ def get_loss_artifacts(
     loss_artifacts = _implementations.get(loss_artifacts_type, None)
 
     return loss_artifacts
+
+
+def get_loss_function_config(
+    model_type: models.ModelType,
+) -> loss_functions.LossFunctionConfig:
+    """Get loss functions configuration for model type.
+
+    Args:
+        model_type: model type.
+
+    Returns:
+        loss_function_config: los function configuration.
+    """
+    _implementations = {
+        models.ModelType.WORD2VECT: {
+            "loss_function_type": loss_functions.LossFunctionType.NLLLOSS
+        }
+    }
+
+    config_params = _implementations.get(model_type, None)
+
+    return loss_functions.LossFunctionConfig(
+        loss_function_type=config_params.get("loss_function_type")
+    )
