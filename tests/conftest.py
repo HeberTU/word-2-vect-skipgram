@@ -209,3 +209,49 @@ def batch_data(request: FixtureRequest) -> models.BatchData:
     words = np.array(idx_to_vocabulary.get(int(idx)) for idx in word_idx)
 
     return models.BatchData(word_idx, words)
+
+
+@pytest.fixture
+def model(request: FixtureRequest) -> models.NNModel:
+    """Create a model instance."""
+    # Get types.
+    model_type = request.param.get("model_type")
+    network_architecture = request.param.get("network_architecture")
+
+    # Model config
+    model_artifacts = w2v_fixtures.get_model_artifacts(model_type)
+    model_config = w2v_fixtures.get_model_config(
+        model_type=model_type,
+        model_artifacts=model_artifacts,
+    )
+
+    # Network config
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
+    network_config = w2v_fixtures.get_network_config(
+        network_architecture=network_architecture,
+        network_artifacts=network_artifacts,
+    )
+
+    # Metrics config
+    metrics_config = w2v_fixtures.get_metrics_config(model_type=model_type)
+
+    # Loss function config
+    loss_function_config = w2v_fixtures.get_loss_function_config(
+        model_type=model_type
+    )
+
+    # Optimizer configuration
+    optimizer_config = w2v_fixtures.get_optimizer_config(model_type=model_type)
+
+    # Model definition
+    model_definition = models.ModelDefinition(
+        model_config=model_config,
+        network_config=network_config,
+        metrics_config=metrics_config,
+        loss_function_config=loss_function_config,
+        optimizer_config=optimizer_config,
+    )
+
+    return models.ModelFactory(model_definition=model_definition).create()
