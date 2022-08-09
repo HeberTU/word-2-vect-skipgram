@@ -56,17 +56,20 @@ def get_network_artifacts(
 
 
 def get_network_config(
-    network_artifacts: Dict[str, Any]
+    network_architecture: networks.NetworkArchitecture,
+    network_artifacts: Dict[str, Any],
 ) -> networks.NetworkConfig:
     """Get network config using the provided network artifacts.
 
     Args:
+        network_architecture: network architecture.
         network_artifacts: network artifacts.
 
     Returns:
         network_config: network configuration.
     """
     network_config = networks.NetworkConfig(
+        network_architecture=network_architecture,
         features=networks.Features(
             vocabulary=networks.Vocabulary(
                 size=network_artifacts.get("vocabulary_size"),
