@@ -92,7 +92,7 @@ class Word2VectModel(NNModel):
             self.network.eval()
             with torch.no_grad():
                 predictions = self.network.forward(batch_data)
-        elif stage == tracker.Stage.SERVE:
+        elif stage == tracker.Stage.TRAIN:
             self.network.train()
             predictions = self.network.forward(batch_data)
         else:
@@ -173,7 +173,10 @@ class Word2VectModel(NNModel):
         Returns:
             results: model results.
         """
-        return loss_functions.Result(predictions.squeeze(1))
+        return loss_functions.Result(
+            prediction=torch.argmax(predictions, dim=1),
+            log_prob=predictions.squeeze(1),
+        )
 
     @property
     def optimizer(self) -> torch.optim.Optimizer:
