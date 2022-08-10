@@ -44,10 +44,10 @@ class ModelsRepr:
 class MetricType(enum.Enum):
     """Available metrics."""
 
-    INTERFACE = enum.auto()
-    F1 = enum.auto()
-    PRECISION = enum.auto()
-    RECALL = enum.auto()
+    INTERFACE = "interface"
+    F1 = "f1"
+    PRECISION = "precision"
+    RECALL = "recall"
 
 
 @dataclass
@@ -101,6 +101,11 @@ class Metric(ABC):
     metric_type: MetricType
     _metric_values: MetricValues
     params: Optional[Dict[str, Any]] = None
+
+    @property
+    def name(self) -> str:
+        """Get metric name."""
+        return self.metric_type.value
 
     @property
     def metric_values(self) -> MetricValues:
