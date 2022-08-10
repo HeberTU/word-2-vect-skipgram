@@ -43,4 +43,4 @@ class NLLLoss(interface.LossFunction):
         Returns:
             loss: negative log likelihood loss
         """
-        return self._torch_nlloss(result.prediction, ground_truth.target)
+        return self._torch_nlloss(result.log_prob, ground_truth.target)
