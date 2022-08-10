@@ -6,6 +6,7 @@ Created on: 9/8/22
 Licence,
 """
 import pytest
+import torch
 
 from word2vect.ml import (
     loss_functions,
@@ -18,6 +19,7 @@ TEST_PARAMS = [
     {
         "model_type": models.ModelType.WORD2VECT,
         "network_architecture": networks.NetworkArchitecture.SKIPGRAM,
+        "loss_artifacts_type": loss_functions.LossFunctionType.NLLLOSS,
     },
 ]
 
@@ -70,3 +72,24 @@ def test_word2vect_get_model_result(
     assert result.prediction.shape[0] == batch_data.word_idx.shape[0]
     assert result.log_prob.shape[0] == batch_data.word_idx.shape[0]
     assert result.log_prob.shape[1] == model.network.embeddings.num_embeddings
+
+
+@pytest.mark.parametrize("model", TEST_PARAMS, indirect=True)
+@pytest.mark.parametrize("batch_data", TEST_PARAMS, indirect=True)
+@pytest.mark.parametrize("ground_truth", TEST_PARAMS, indirect=True)
+def test_word2vect_learn(
+    model: models.Word2VectModel,
+    batch_data: models.BatchData,
+    ground_truth: loss_functions.GroundTruth,
+) -> None:
+    """Test model's learn method."""
+    predictions = model.forward(
+        batch_data=batch_data, stage=tracker.Stage.TRAIN
+    )
+
+    result = model.get_model_result(predictions)
+
+    _ = model.learn(result=result, ground_truth=ground_truth)
+
+    for params in model.network.parameters():
+        assert not (params.grad == torch.zeros(params.shape)).all().item()
