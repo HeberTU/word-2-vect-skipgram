@@ -30,6 +30,7 @@ class LossFunctionType(enum.Enum):
 class LossFunctionConfig:
     """Data structure to store loss function config."""
 
+    loss_function_type: LossFunctionType
     params: Optional[Dict[str, Any]] = None
 
 
@@ -51,18 +52,19 @@ class LossFunctionFactory:
             LossFunctionType.NLLLOSS: negative_log_likelihood.NLLLoss
         }
 
-    def create(self, loss_function_type: LossFunctionType):
+    def create(self):
         """Create the loss function.
-
-        Args:
-            loss_function_type: loss function type.
 
         Returns:
             loss_function: loss function instance.
         """
-        loss_function = self._loss_functions.get(loss_function_type, None)
+        loss_function = self._loss_functions.get(
+            self._config.loss_function_type, None
+        )
 
         if loss_function is None:
-            raise NotImplementedError(f"{loss_function_type} not implemented.")
+            raise NotImplementedError(
+                f"{self._config.loss_function_type} not implemented."
+            )
 
         return loss_function(self._config.params)

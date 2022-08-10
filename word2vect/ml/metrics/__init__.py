@@ -19,6 +19,7 @@ from .metrics_factory import (
     MetricConfig,
     MetricFactory,
     MetricsConfig,
+    ModelMetricsFactory,
     PrecisionScore,
     RecallScore,
 )
@@ -37,4 +38,5 @@ __all__ = [
     "ModelsRepr",
     "ModelMetrics",
     "MetricFactory",
+    "ModelMetricsFactory",
 ]

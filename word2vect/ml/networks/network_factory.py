@@ -38,6 +38,7 @@ class NetworkArchitecture(Enum):
 class NetworkConfig:
     """Network configuration definition."""
 
+    network_architecture: NetworkArchitecture
     features: Features
     hidden_layers: HiddenLayers
     output_layer: OutputLayer
@@ -55,32 +56,32 @@ class NetworkFactory:
         Args:
             network_config:
         """
-        self.config = network_config
+        self._config = network_config
         self.network_dict: Dict[NetworkArchitecture, Type[nn.Module]] = {
             NetworkArchitecture.SKIPGRAM: SkipGram
         }
 
-    def create(self, network_architecture: NetworkArchitecture) -> nn.Module:
+    def create(self) -> nn.Module:
         """Instantiate the network, given a config and net architecture.
-
-        Parameters
-        ----------
-        network_architecture : NetworkArchitecture
-            The network architecture from the implementation options.
 
         Returns
         -------
         nn.Module
             The network for the given model type.
         """
-        network = self.network_dict.get(network_architecture, None)
+        network = self.network_dict.get(
+            self._config.network_architecture, None
+        )
 
         if network is None:
-            msg = f"{network_architecture} architecture not implemented"
+            msg = (
+                f"{self._config.network_architecture} architecture "
+                f"not implemented"
+            )
             raise NotImplementedError(msg)
 
         return network(
-            self.config.features,
-            self.config.hidden_layers,
-            self.config.output_layer,
+            self._config.features,
+            self._config.hidden_layers,
+            self._config.output_layer,
         )
