@@ -9,7 +9,7 @@ import torch.optim as optim
 from torch import nn
 
 from word2vect.data.data_prep import get_batches
-from word2vect.ml.model.architecture import SkipGram
+from word2vect.ml.models.architecture import SkipGram
 from word2vect.ml.model_selection.validation import cosine_similarity
 
 

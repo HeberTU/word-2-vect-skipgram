@@ -8,7 +8,7 @@ Licence,
 import torch
 from torch import nn
 
-from word2vect.ml import model
+from word2vect.ml.models.model_interface import BatchData
 from word2vect.ml.networks.features import Features
 from word2vect.ml.networks.fully_connected import (
     HiddenLayers,
@@ -47,7 +47,7 @@ class SkipGram(nn.Module):
             self.features, self.hidden_layers, self.output_layer
         )
 
-    def forward(self, batch_data: model.BatchData) -> torch.FloatTensor:
+    def forward(self, batch_data: BatchData) -> torch.FloatTensor:
         """Forward pass implementation.
 
         Args:

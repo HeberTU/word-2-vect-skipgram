@@ -25,7 +25,7 @@ import tests.fixtures as w2v_fixtures
 from word2vect.ml import (
     loss_functions,
     metrics,
-    model,
+    models,
     networks,
 )
 
@@ -98,28 +98,15 @@ def network(request: FixtureRequest) -> Type[nn.Module]:
     network_artifacts = w2v_fixtures.get_network_artifacts(
         network_architecture
     )
-    network_config = networks.NetworkConfig(
-        features=networks.Features(
-            vocabulary=networks.Vocabulary(
-                size=network_artifacts.get("vocabulary_size"),
-                vocabulary_to_idx=network_artifacts.get("vocabulary_to_idx"),
-                idx_to_vocabulary=network_artifacts.get("idx_to_vocabulary"),
-            ),
-            embedding_dim=network_artifacts.get("embedding_dim"),
-        ),
-        hidden_layers=networks.HiddenLayers(
-            hidden_dim=network_artifacts.get("hidden_dim"),
-            activation=network_artifacts.get("activation"),
-            dropout=network_artifacts.get("dropout"),
-        ),
-        output_layer=networks.OutputLayer(
-            activation=network_artifacts.get("activation_out")
-        ),
+
+    network_config = w2v_fixtures.get_network_config(
+        network_architecture=network_architecture,
+        network_artifacts=network_artifacts,
     )
 
-    network = networks.NetworkFactory(network_config=network_config).create(
-        network_architecture=network_architecture
-    )
+    network_factory = networks.NetworkFactory(network_config=network_config)
+
+    network = network_factory.create()
 
     return network
 
@@ -175,30 +162,37 @@ def metric(request: FixtureRequest) -> Type[metrics.Metric]:
     """Create a metric values instance."""
     metric_type = request.param.get("metric_type")
 
-    available_metrics = {
-        metrics.MetricType.F1: metrics.F1Score,
-        metrics.MetricType.PRECISION: metrics.PrecisionScore,
-        metrics.MetricType.RECALL: metrics.RecallScore,
-    }
+    metrics_artifacts = w2v_fixtures.get_metrics_artifacts(
+        metric_type=metric_type,
+    )
 
-    return available_metrics.get(metric_type)()
+    _metric = metrics.MetricFactory(
+        metric_config=metrics.MetricConfig(
+            metric_type=metric_type,
+            params=metrics_artifacts.get("params"),
+        )
+    ).create()
+
+    return _metric
 
 
 @pytest.fixture
 def measurement(request: FixtureRequest) -> metrics.Measurement:
     """Create a measurement set."""
     metric_type = request.param.get("metric_type")
+    metrics_artifacts = w2v_fixtures.get_metrics_artifacts(
+        metric_type=metric_type,
+    )
     metrics_artifacts = {
-        metrics.MetricType.INTERFACE: {"value": 0.9, "batch_size": 512},
-        metrics.MetricType.F1: {"value": 0.26666666, "batch_size": 6},
-        metrics.MetricType.PRECISION: {"value": 0.33333333, "batch_size": 6},
-        metrics.MetricType.RECALL: {"value": 0.2222222, "batch_size": 6},
+        k: v
+        for k, v in metrics_artifacts.items()
+        if k in metrics.Measurement.__annotations__.keys()
     }
-    return metrics.Measurement(**metrics_artifacts.get(metric_type))
+    return metrics.Measurement(**metrics_artifacts)
 
 
 @pytest.fixture
-def batch_data(request: FixtureRequest) -> model.BatchData:
+def batch_data(request: FixtureRequest) -> models.BatchData:
     """Create a batch data instance."""
     network_architecture = request.param.get("network_architecture")
 
@@ -212,6 +206,52 @@ def batch_data(request: FixtureRequest) -> model.BatchData:
         low=0, high=network_artifacts.get("vocabulary_size") - 1, size=(10,)
     )
 
-    words = np.array(idx_to_vocabulary.get(int(idx)) for idx in word_idx)
+    words = np.array([idx_to_vocabulary.get(int(idx)) for idx in word_idx])
 
-    return model.BatchData(word_idx, words)
+    return models.BatchData(word_idx, words)
+
+
+@pytest.fixture
+def model(request: FixtureRequest) -> models.NNModel:
+    """Create a model instance."""
+    # Get types.
+    model_type = request.param.get("model_type")
+    network_architecture = request.param.get("network_architecture")
+
+    # Model config
+    model_artifacts = w2v_fixtures.get_model_artifacts(model_type)
+    model_config = w2v_fixtures.get_model_config(
+        model_type=model_type,
+        model_artifacts=model_artifacts,
+    )
+
+    # Network config
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
+    network_config = w2v_fixtures.get_network_config(
+        network_architecture=network_architecture,
+        network_artifacts=network_artifacts,
+    )
+
+    # Metrics config
+    metrics_config = w2v_fixtures.get_metrics_config(model_type=model_type)
+
+    # Loss function config
+    loss_function_config = w2v_fixtures.get_loss_function_config(
+        model_type=model_type
+    )
+
+    # Optimizer configuration
+    optimizer_config = w2v_fixtures.get_optimizer_config(model_type=model_type)
+
+    # Model definition
+    model_definition = models.ModelDefinition(
+        model_config=model_config,
+        network_config=network_config,
+        metrics_config=metrics_config,
+        loss_function_config=loss_function_config,
+        optimizer_config=optimizer_config,
+    )
+
+    return models.ModelFactory(model_definition=model_definition).create()

@@ -53,7 +53,7 @@ class Result:
     """Data structure used to store different net outputs."""
 
     prediction: torch.Tensor
-    log_prob: Optional[torch.Tensor] = None
+    log_prob: torch.Tensor
     measures: Optional[Dict[str, torch.Tensor]] = None
 
 

@@ -8,6 +8,7 @@ Created on: 1/8/22
 @author: Heber Trujillo <heber.trj.urt@gmail.com>
 Licence,
 """
+import enum
 import pathlib
 from abc import (
     ABC,
@@ -30,7 +31,11 @@ from word2vect.ml import (
     tracker,
 )
 
-from .model_factory import ModelType
+
+class ModelType(enum.Enum):
+    """Available model types."""
+
+    WORD2VECT = enum.auto()
 
 
 @dataclass()

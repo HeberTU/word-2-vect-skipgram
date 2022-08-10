@@ -12,7 +12,7 @@ import torch
 from torch import nn
 
 from word2vect.ml import (
-    model,
+    models,
     networks,
 )
 
@@ -29,7 +29,7 @@ from word2vect.ml import (
 )
 def test_forward_output_shape(
     network: Type[nn.Module],
-    batch_data: model.BatchData,
+    batch_data: models.BatchData,
 ) -> None:
     """This function test that the output shapes are right."""
     network.eval()
@@ -53,7 +53,7 @@ def test_forward_output_shape(
 )
 def test_forward_output_probs(
     network: Type[nn.Module],
-    batch_data: model.BatchData,
+    batch_data: models.BatchData,
 ) -> None:
     """This function test that the output shapes are right."""
     network.eval()
