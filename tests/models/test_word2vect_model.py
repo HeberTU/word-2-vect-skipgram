@@ -10,6 +10,7 @@ import torch
 
 from word2vect.ml import (
     loss_functions,
+    metrics,
     models,
     networks,
     tracker,
@@ -24,6 +25,7 @@ TEST_PARAMS = [
 ]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("model", TEST_PARAMS, indirect=True)
 @pytest.mark.parametrize("batch_data", TEST_PARAMS, indirect=True)
 def test_word2vect_forward_step_serve(
@@ -40,6 +42,7 @@ def test_word2vect_forward_step_serve(
     assert model.network.embeddings.num_embeddings == predictions.shape[1]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("model", TEST_PARAMS, indirect=True)
 @pytest.mark.parametrize("batch_data", TEST_PARAMS, indirect=True)
 def test_word2vect_forward_step_train(
@@ -56,6 +59,7 @@ def test_word2vect_forward_step_train(
     assert model.network.embeddings.num_embeddings == predictions.shape[1]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("model", TEST_PARAMS, indirect=True)
 @pytest.mark.parametrize("batch_data", TEST_PARAMS, indirect=True)
 def test_word2vect_get_model_result(
@@ -74,6 +78,7 @@ def test_word2vect_get_model_result(
     assert result.log_prob.shape[1] == model.network.embeddings.num_embeddings
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("model", TEST_PARAMS, indirect=True)
 @pytest.mark.parametrize("batch_data", TEST_PARAMS, indirect=True)
 @pytest.mark.parametrize("ground_truth", TEST_PARAMS, indirect=True)
@@ -93,3 +98,50 @@ def test_word2vect_learn(
 
     for params in model.network.parameters():
         assert not (params.grad == torch.zeros(params.shape)).all().item()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("model", TEST_PARAMS, indirect=True)
+@pytest.mark.parametrize("batch_data", TEST_PARAMS, indirect=True)
+@pytest.mark.parametrize("ground_truth", TEST_PARAMS, indirect=True)
+def test_word2vect_evaluate(
+    model: models.Word2VectModel,
+    batch_data: models.BatchData,
+    ground_truth: loss_functions.GroundTruth,
+) -> None:
+    """Test model's evaluate method."""
+    predictions = model.forward(
+        batch_data=batch_data, stage=tracker.Stage.TRAIN
+    )
+
+    result = model.get_model_result(predictions)
+
+    loss = model.learn(result=result, ground_truth=ground_truth)
+
+    assert_metrics_are_empty(model_metrics=model.model_metrics)
+
+    model.evaluate(result, ground_truth, loss)
+
+    assert_metrics_are_not_empty(model_metrics=model.model_metrics)
+
+
+def assert_metrics_are_empty(model_metrics: metrics.ModelMetrics) -> None:
+    """Test tha each component in Metrics class, if present, is empty."""
+    assert len(model_metrics.optimizing_metric.metric_values.values) == 0
+    assert len(model_metrics.optimizing_metric.metric_values.batch_sizes) == 0
+
+    if model_metrics.secondary_metrics is not None:
+        for _, secondary_metric in model_metrics.secondary_metrics.items():
+            assert len(secondary_metric.metric_values.values) == 0
+            assert secondary_metric.metric_values.batch_sizes == []
+
+
+def assert_metrics_are_not_empty(model_metrics: metrics.ModelMetrics) -> None:
+    """Test tha each component in Metrics class, if present, is not empty."""
+    assert len(model_metrics.optimizing_metric.metric_values.values) > 0
+    assert len(model_metrics.optimizing_metric.metric_values.batch_sizes) > 0
+
+    if model_metrics.secondary_metrics is not None:
+        for _, secondary_metric in model_metrics.secondary_metrics.items():
+            assert len(secondary_metric.metric_values.values) > 0
+            assert len(secondary_metric.metric_values.batch_sizes) > 0
