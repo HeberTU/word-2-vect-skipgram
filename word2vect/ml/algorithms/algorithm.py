@@ -10,7 +10,13 @@ from abc import (
     abstractmethod,
 )
 
-from word2vect.ml import tracker
+import torch
+
+from word2vect.ml import (
+    loss_functions,
+    models,
+    tracker,
+)
 
 
 class Algorithm(ABC):
@@ -25,5 +31,73 @@ class Algorithm(ABC):
 
         Returns:
             None.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def validate(self) -> None:
+        """Validate model using validation data set.
+
+        Forward step without computing the gradients and then use the
+        validation set to measure the different metrics.
+
+        Returns:
+            None.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def evaluate(
+        self,
+        result: loss_functions.Result,
+        ground_truth: loss_functions.GroundTruth,
+        loss: torch.Tensor,
+        stage: tracker.Stage = tracker.Stage.TRAIN,
+    ) -> None:
+        """Measure model metrics for the NN model.
+
+        Args:
+            result: model result.
+            ground_truth: ground truth.
+            loss: loss.
+            stage: training stage.
+
+        Returns:
+            None.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def log(
+        self, training_tracker: tracker.TrainingTracker, stage: tracker.Stage
+    ) -> None:
+        """Log metrics using a tracker.
+
+        Args:
+            training_tracker: training tracker.
+            stage: training stage.
+
+        Returns:
+            None.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def models_repr(self) -> models.ModelsRepr:
+        """Get the model representation.
+
+        Returns:
+            model_repr: model representation.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def total_steps(self) -> int:
+        """Get total number of steps performed by the algorithm in an epoch.
+
+        Returns:
+            total_steps: total steps performed by the model.
         """
         raise NotImplementedError()
