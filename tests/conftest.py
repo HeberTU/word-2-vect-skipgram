@@ -23,10 +23,12 @@ from torch.nn import (
 
 import tests.fixtures as w2v_fixtures
 from word2vect.ml import (
+    algorithms,
     loss_functions,
     metrics,
     models,
     networks,
+    tracker,
 )
 
 
@@ -60,6 +62,58 @@ def get_hidden_layers(
 def get_output_layer() -> networks.OutputLayer:
     """Get output layer sample test."""
     return networks.OutputLayer(activation=LogSoftmax(dim=1))
+
+
+def get_model_definition(
+    model_type: models.ModelType,
+    network_architecture: networks.NetworkArchitecture,
+) -> models.ModelDefinition:
+    """Define model based on model type and network architecture.
+
+    Args:
+        model_type: model type.
+        network_architecture: network architecture.
+
+    Returns:
+        model_definition: model definition data structure.
+    """
+    # Model config
+    model_artifacts = w2v_fixtures.get_model_artifacts(model_type)
+    model_config = w2v_fixtures.get_model_config(
+        model_type=model_type,
+        model_artifacts=model_artifacts,
+    )
+
+    # Network config
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
+    network_config = w2v_fixtures.get_network_config(
+        network_architecture=network_architecture,
+        network_artifacts=network_artifacts,
+    )
+
+    # Metrics config
+    metrics_config = w2v_fixtures.get_metrics_config(model_type=model_type)
+
+    # Loss function config
+    loss_function_config = w2v_fixtures.get_loss_function_config(
+        model_type=model_type
+    )
+
+    # Optimizer configuration
+    optimizer_config = w2v_fixtures.get_optimizer_config(model_type=model_type)
+
+    # Model definition
+    model_definition = models.ModelDefinition(
+        model_config=model_config,
+        network_config=network_config,
+        metrics_config=metrics_config,
+        loss_function_config=loss_function_config,
+        optimizer_config=optimizer_config,
+    )
+
+    return model_definition
 
 
 @pytest.fixture
@@ -218,40 +272,32 @@ def model(request: FixtureRequest) -> models.NNModel:
     model_type = request.param.get("model_type")
     network_architecture = request.param.get("network_architecture")
 
-    # Model config
-    model_artifacts = w2v_fixtures.get_model_artifacts(model_type)
-    model_config = w2v_fixtures.get_model_config(
-        model_type=model_type,
-        model_artifacts=model_artifacts,
-    )
-
-    # Network config
-    network_artifacts = w2v_fixtures.get_network_artifacts(
-        network_architecture
-    )
-    network_config = w2v_fixtures.get_network_config(
-        network_architecture=network_architecture,
-        network_artifacts=network_artifacts,
-    )
-
-    # Metrics config
-    metrics_config = w2v_fixtures.get_metrics_config(model_type=model_type)
-
-    # Loss function config
-    loss_function_config = w2v_fixtures.get_loss_function_config(
-        model_type=model_type
-    )
-
-    # Optimizer configuration
-    optimizer_config = w2v_fixtures.get_optimizer_config(model_type=model_type)
-
-    # Model definition
-    model_definition = models.ModelDefinition(
-        model_config=model_config,
-        network_config=network_config,
-        metrics_config=metrics_config,
-        loss_function_config=loss_function_config,
-        optimizer_config=optimizer_config,
+    model_definition = get_model_definition(
+        model_type=model_type, network_architecture=network_architecture
     )
 
     return models.ModelFactory(model_definition=model_definition).create()
+
+
+@pytest.fixture()
+def training_tracker(request: FixtureRequest) -> Type[tracker.TrainingTracker]:
+    """Training tracker."""
+    return w2v_fixtures.get_training_tracker(request.param)
+
+
+@pytest.fixture()
+def algorithm(request: FixtureRequest) -> Type[algorithms.Algorithm]:
+    """Single network algorithm."""
+    model_type = request.param.get("model_type")
+    network_architecture = request.param.get("network_architecture")
+
+    model_definition = get_model_definition(
+        model_type=model_type, network_architecture=network_architecture
+    )
+
+    model = models.ModelFactory(model_definition=model_definition).create()
+
+    network_artifacts = w2v_fixtures.get_network_artifacts(
+        network_architecture
+    )
+    return model, network_artifacts
