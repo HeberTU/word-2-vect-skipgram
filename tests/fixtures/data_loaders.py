@@ -65,5 +65,6 @@ def get_data_loader(batch_size: int) -> DataLoader:
     Returns:
         data_loader: An instance of pytorch's data loader.
     """
-    word2vect = get_dataset()
-    return DataLoader(dataset=word2vect, batch_size=batch_size, shuffle=False)
+    return DataLoader(
+        dataset=get_dataset(), batch_size=batch_size, shuffle=False
+    )
