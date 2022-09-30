@@ -10,6 +10,7 @@ from collections import Counter
 from typing import List
 
 import numpy as np
+from scipy import stats
 from torch.utils.data import Dataset
 
 
@@ -25,16 +26,20 @@ class W2VDataset(Dataset):
         self.words = words
         self.train_words = self._subsampling()
 
-    def __getitem__(self, item: int):
+    def __len__(self):
+        """Get the number of train words."""
+        return len(self.train_words)
+
+    def __getitem__(self, idx: int) -> int:
         """Get data item.
 
         Args:
             item: index.
 
         Returns:
-            data.
+            word
         """
-        pass
+        return self.train_words[idx]
 
     def _subsampling(self, threshold: float = 1e-5) -> List[int]:
         """Create a subsampling from the original set of words.
@@ -46,6 +51,17 @@ class W2VDataset(Dataset):
         Returns:
             train_words:
         """
+        pr, _ = stats.kstest(
+            rvs=self.words,
+            cdf=stats.uniform(
+                loc=int(np.mean(self.words)),
+                scale=np.std(self.words),
+            ).cdf,
+        )
+
+        if pr > 0.05:
+            return self.words
+
         total_count = len(self.words)
         word_counts = Counter(self.words)
 
