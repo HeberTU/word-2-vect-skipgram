@@ -66,5 +66,8 @@ def get_data_loader(batch_size: int) -> DataLoader:
         data_loader: An instance of pytorch's data loader.
     """
     return DataLoader(
-        dataset=get_dataset(), batch_size=batch_size, shuffle=False
+        dataset=get_dataset(),
+        batch_size=batch_size,
+        shuffle=False,
+        collate_fn=loaders.skipgram_collate,
     )
