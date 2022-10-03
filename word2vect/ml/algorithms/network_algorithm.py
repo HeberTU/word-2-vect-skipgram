@@ -16,6 +16,7 @@ from torch.utils.data import DataLoader
 
 from word2vect.ml import (
     loss_functions,
+    metrics,
     models,
     tracker,
 )
@@ -123,7 +124,7 @@ class NetworkAlgorithm(Algorithm):
         self.nn_model.log(tracker, stage)
 
     @property
-    def models_repr(self) -> models.ModelsRepr:
+    def models_repr(self) -> metrics.ModelsRepr:
         """Get the model representation.
 
         Returns:
