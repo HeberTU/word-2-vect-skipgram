@@ -14,7 +14,7 @@ import torch
 
 from word2vect.ml import (
     loss_functions,
-    models,
+    metrics,
     tracker,
 )
 
@@ -84,7 +84,7 @@ class Algorithm(ABC):
 
     @property
     @abstractmethod
-    def models_repr(self) -> models.ModelsRepr:
+    def models_repr(self) -> metrics.ModelsRepr:
         """Get the model representation.
 
         Returns:
