@@ -10,22 +10,25 @@ from collections import Counter
 from typing import List
 
 import numpy as np
-from scipy import stats
 from torch.utils.data import Dataset
 
 
 class W2VDataset(Dataset):
     """This class represent a map from keys to data samples."""
 
-    def __init__(self, words: List[int], batch_size: int):
+    def __init__(
+        self, words: List[int], batch_size: int, threshold: float = 1e-5
+    ):
         """Initialize a word2vect dataset.
 
         Args:
             words: word in raw data format.
             batch_size: number of samples per batch.
+            threshold: subsampling threshold
         """
         self.words = words
         self.batch_size = batch_size
+        self.threshold = threshold
         self.train_words = self._subsampling()
         self.train_words = self._fit_words_to_batch_size()
 
@@ -44,7 +47,7 @@ class W2VDataset(Dataset):
         """
         return self.train_words[idx]
 
-    def _subsampling(self, threshold: float = 1e-5) -> List[int]:
+    def _subsampling(self) -> List[int]:
         """Create a subsampling from the original set of words.
 
         Args:
@@ -54,17 +57,6 @@ class W2VDataset(Dataset):
         Returns:
             train_words: words use for training.
         """
-        pr, _ = stats.kstest(
-            rvs=self.words,
-            cdf=stats.uniform(
-                loc=int(np.mean(self.words)),
-                scale=np.std(self.words),
-            ).cdf,
-        )
-
-        if pr > 0.05:
-            return self.words
-
         total_count = len(self.words)
         word_counts = Counter(self.words)
 
@@ -73,7 +65,8 @@ class W2VDataset(Dataset):
         }
 
         p_drop = {
-            word: 1 - np.sqrt(threshold / freqs[word]) for word in word_counts
+            word: 1 - np.sqrt(self.threshold / freqs[word])
+            for word in word_counts
         }
 
         train_words = [
