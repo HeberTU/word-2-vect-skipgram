@@ -17,14 +17,17 @@ from torch.utils.data import Dataset
 class W2VDataset(Dataset):
     """This class represent a map from keys to data samples."""
 
-    def __init__(self, words: List[int]):
+    def __init__(self, words: List[int], batch_size: int):
         """Initialize a word2vect dataset.
 
         Args:
             words: word in raw data format.
+            batch_size: number of samples per batch.
         """
         self.words = words
+        self.batch_size = self.batch_size
         self.train_words = self._subsampling()
+        self.train_words = self._fit_words_to_batch_size()
 
     def __len__(self):
         """Get the number of train words."""
@@ -49,7 +52,7 @@ class W2VDataset(Dataset):
             frequent words.
 
         Returns:
-            train_words:
+            train_words: words use for training.
         """
         pr, _ = stats.kstest(
             rvs=self.words,
@@ -78,3 +81,12 @@ class W2VDataset(Dataset):
         ]
 
         return train_words
+
+    def _fit_words_to_batch_size(self) -> List[int]:
+        """Select the maximum number of whole batches.
+
+        Returns:
+            train_words: words use for training.
+        """
+        n_batches = len(self.train_words) // self.batch_size
+        return self.train_words[: n_batches * self.batch_size]
