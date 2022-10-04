@@ -25,7 +25,7 @@ class W2VDataset(Dataset):
             batch_size: number of samples per batch.
         """
         self.words = words
-        self.batch_size = self.batch_size
+        self.batch_size = batch_size
         self.train_words = self._subsampling()
         self.train_words = self._fit_words_to_batch_size()
 
