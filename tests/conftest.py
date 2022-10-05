@@ -20,6 +20,7 @@ from torch.nn import (
     LogSoftmax,
     ReLU,
 )
+from torch.utils.data import DataLoader
 
 import tests.fixtures as w2v_fixtures
 from word2vect.ml import (
@@ -283,6 +284,33 @@ def model(request: FixtureRequest) -> models.NNModel:
 def training_tracker(request: FixtureRequest) -> Type[tracker.TrainingTracker]:
     """Training tracker."""
     return w2v_fixtures.get_training_tracker(request.param)
+
+
+@pytest.fixture()
+def dataset(request: FixtureRequest) -> DataLoader:
+    """Word2Vect Dataset."""
+    dataset_size = request.param.get("dataset_size")
+    batch_size = request.param.get("batch_size")
+
+    dataset = w2v_fixtures.get_dataset(
+        dataset_size=dataset_size,
+        batch_size=batch_size,
+    )
+
+    return dataset
+
+
+@pytest.fixture()
+def data_loader(request: FixtureRequest) -> DataLoader:
+    """Pytorch data loader."""
+    batch_size = request.param.get("batch_size")
+    dataset_size = request.param.get("dataset_size")
+
+    data_loader = w2v_fixtures.get_data_loader(
+        dataset_size=dataset_size,
+        batch_size=batch_size,
+    )
+    return data_loader
 
 
 @pytest.fixture()
