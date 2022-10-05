@@ -60,17 +60,20 @@ class W2VDataset(Dataset):
         total_count = len(self.words)
         word_counts = Counter(self.words)
 
-        freqs = {
+        self.freqs = {
             word: count / total_count for word, count in word_counts.items()
         }
 
-        p_drop = {
-            word: 1 - np.sqrt(self.threshold / freqs[word])
+        self.p_drop = {
+            word: max(1 - np.sqrt(self.threshold / self.freqs[word]), 0)
             for word in word_counts
         }
 
+        random.seed(27)
         train_words = [
-            word for word in self.words if random.random() < (1 - p_drop[word])
+            word
+            for word in self.words
+            if random.random() < (1 - self.p_drop[word])
         ]
 
         return train_words
