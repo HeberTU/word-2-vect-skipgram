@@ -39,11 +39,16 @@ def skipgram_collate(
         feat_batch = words_batch[i]
         target_batch = get_target(words_batch, i)
 
-        features = torch.cat(tensors=(features, feat_batch.reshape(1)))
+        feat_batch = feat_batch.repeat(len(target_batch))
 
+        features = torch.cat(tensors=(features, feat_batch))
         target = torch.cat(tensors=(target, target_batch))
 
-    return None
+    batch = models.BatchData(word_idx=features)
+
+    ground_truth = loss_functions.GroundTruth(target=target)
+
+    return batch, ground_truth
 
 
 def get_target(
