@@ -316,8 +316,13 @@ def data_loader(request: FixtureRequest) -> DataLoader:
 @pytest.fixture()
 def algorithm(request: FixtureRequest) -> Type[algorithms.Algorithm]:
     """Single network algorithm."""
+    algorithm_type = request.param.get("algorithm_type")
+
     model_type = request.param.get("model_type")
     network_architecture = request.param.get("network_architecture")
+
+    batch_size = request.param.get("batch_size")
+    dataset_size = request.param.get("dataset_size")
 
     model_definition = get_model_definition(
         model_type=model_type, network_architecture=network_architecture
@@ -325,7 +330,25 @@ def algorithm(request: FixtureRequest) -> Type[algorithms.Algorithm]:
 
     model = models.ModelFactory(model_definition=model_definition).create()
 
-    network_artifacts = w2v_fixtures.get_network_artifacts(
-        network_architecture
+    train_loader = w2v_fixtures.get_data_loader(
+        dataset_size=dataset_size,
+        batch_size=batch_size,
     )
-    return model, network_artifacts
+
+    val_loader = w2v_fixtures.get_data_loader(
+        dataset_size=dataset_size // 4,
+        batch_size=batch_size,
+    )
+
+    algorithm_config = algorithms.AlgorithmConfig(
+        algorithm_type=algorithm_type,
+        nn_model=model,
+        train_loader=train_loader,
+        val_loader=val_loader,
+    )
+
+    algorithm = algorithms.AlgorithmFactory(
+        algorithm_config=algorithm_config
+    ).create()
+
+    return algorithm
