@@ -18,15 +18,16 @@ def get_tensorboard_tracker() -> tracker.TrainingTracker:
 
     The model representation here is just a placeholder.
     """
-    return tracker.TrainingTrackerFactory().get_tracker(
-        "tensorboard",
+    return tracker.TrainingTrackerFactory().create(
+        tracker.TrackerType.TENSORBOARD,
         metrics.ModelsRepr("Model", "hash"),
         steps_per_epoch=10,
-        tracker_log_dir="test_tmp",
     )
 
 
-def get_training_tracker(tracker_type: str) -> Type[tracker.TrainingTracker]:
+def get_training_tracker(
+    tracker_type: tracker.TrackerType,
+) -> Type[tracker.TrainingTracker]:
     """Get the training tracker instance according to the tracker type.
 
     Parameters
@@ -39,7 +40,7 @@ def get_training_tracker(tracker_type: str) -> Type[tracker.TrainingTracker]:
     _tracker: Type[TrainingTracker]
         training tracker for the given tracker_type
     """
-    tracker_dict = {"tensorboard": get_tensorboard_tracker()}
+    tracker_dict = {tracker.TrackerType.TENSORBOARD: get_tensorboard_tracker()}
 
     _tracker = tracker_dict.get(tracker_type)
     if _tracker is None:
