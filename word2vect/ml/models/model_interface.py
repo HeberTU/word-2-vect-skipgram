@@ -168,7 +168,7 @@ class NNModel(ABC):
     def reset(self):
         """Reset model history."""
         self.step = 0
-        self.metrics.flush()
+        self.model_metrics.flush()
         self.training_stats.flush()
 
     @abstractmethod
