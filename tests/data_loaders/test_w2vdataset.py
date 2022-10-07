@@ -44,7 +44,7 @@ def test_dataset_subsampling(dataset: loaders.W2VDataset) -> None:
 
     ratio = sum(list(differences.values())) / len(list(differences.values()))
 
-    assert ratio == pytest.approx(1, 0.025)
+    assert int(round(ratio)) == 1
 
 
 @pytest.mark.unit
