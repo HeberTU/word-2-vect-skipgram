@@ -33,8 +33,8 @@ def skipgram_collate(
         ground_truth: target variables.
     """
     words_batch = default_collate(data)
-    features = torch.Tensor()
-    target = torch.Tensor()
+    features = torch.LongTensor()
+    target = torch.LongTensor()
     for i in range(len(words_batch)):
         feat_batch = words_batch[i]
         target_batch = get_target(words_batch, i)
@@ -67,7 +67,7 @@ def get_target(
     Returns:
         window: word window around target.
     """
-    window = torch.Tensor()
+    window = torch.LongTensor()
     r = np.random.randint(1, window_size + 1)
 
     if idx - r < 0:
